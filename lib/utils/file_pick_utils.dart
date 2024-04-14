@@ -12,12 +12,13 @@ Future<String?> pickExcel() async {
   );
   var filePath = result?.files.single.path;
   if (filePath != null) {
-    if (!filePath.endsWith(".xlsx") || !filePath.endsWith(".xls") || !!filePath.endsWith(".csv") || !filePath.endsWith(".tsv")) {
+    if (!filePath.endsWith(".xlsx") && !filePath.endsWith(".xls") && !!filePath.endsWith(".csv") && !filePath.endsWith(".tsv")) {
       showToast('仅支持xlsx/xls/csv/tsv格式的文件');
     }
-  } else {
-    showToast('选择文件错误，请重试');
   }
+  // else {
+  //   showToast('选择文件错误，请重试');
+  // }
   completer.complete(filePath);
   return await completer.future;
 }

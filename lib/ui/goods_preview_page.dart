@@ -1,9 +1,6 @@
-import 'dart:io';
-
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/base/base_page.dart';
+import 'package:storetools/entity/goods_entity.dart';
 import 'package:storetools/entity/goods_row_entity.dart';
 import 'package:storetools/excel/converter/business/goods_coverter.dart';
 import 'package:storetools/excel/excel_kit.dart';
@@ -37,6 +34,10 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
       return;
     }
     var goodsRows = await ExcelKit.getInstance().encode(path, GoodsConverter());
+    var goodsEntities = GoodsEntity.fromRows(goodsRows);
+    if (goodsEntities?.isNotEmpty == true) {
+      print("商品信息：${goodsEntities![0].skuGroups.first.name}");
+    }
     // print("读取到的个数:${goodsRows?.length}");
     setState(() {
       _goodsList = goodsRows;
@@ -45,13 +46,13 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("刷新界面: ${_goodsList?.length}");
     return Scaffold(
       appBar: AppBar(title: const Text('商品审核')),
       body: ListView.builder(
           itemCount: _goodsList?.length ?? 0,
           itemBuilder: (context, index) {
             var item = _goodsList?[index];
+            // print(json.encoder.convert(item))
             return ListTile(
               title: Text('$index${item?.skuName}'),
               onTap: () async {

@@ -4,8 +4,6 @@ class GoodsRowEntity {
   String thirdPartyId = '';
   //名称
   String name = '';
-  //分组名
-  String skuGroupName = '';
   //skuId
   String skuId = '';
   //sku名称

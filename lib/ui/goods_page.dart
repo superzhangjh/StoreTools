@@ -18,6 +18,7 @@ class GoodsState extends State<GoodsPage> {
   static const menuExcel = 'AddWithExcel';
 
   final List<String> items = List.generate(50, (index) => "Item $index");
+  String? _filePath;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +34,16 @@ class GoodsState extends State<GoodsPage> {
                       break;
                     case menuExcel:
                       var filePath = await pickExcel();
+                      _filePath = filePath;
                       if (filePath != null) {
                         print("选择的文件: $filePath");
                         Navigator.pushNamed(context, Routes.goodsPreview, arguments: { 'filePath': filePath });
                       }
                       break;
                     case 'selectPre':
-                      Navigator.pushNamed(context, Routes.goodsPreview, arguments: { 'filePath': "/data/user/0/com.zjh.storetools/cache/file_picker/productExport-546cf8f8-f772-2884-c5ed-7900650a4b00.xlsx" });
+                      if (_filePath != null) {
+                        Navigator.pushNamed(context, Routes.goodsPreview, arguments: { 'filePath': _filePath });
+                      }
                       break;
                   }
                 },
