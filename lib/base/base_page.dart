@@ -9,12 +9,12 @@ abstract class BaseState<T extends BasePage> extends State<BasePage> {
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (_isInitializedContext) return;
       _isInitializedContext = true;
       initBuildContext(context);
     });
-    super.initState();
   }
 
   void initBuildContext(BuildContext context) {}

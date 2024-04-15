@@ -12,4 +12,15 @@ class GoodsSkuEntity {
   double price = 0;
   //成本价
   double? costPrice;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'nickName': nickName,
+      'coverUrl': coverUrl,
+      'price': price,
+      'costPrice': costPrice
+    };
+  }
 }

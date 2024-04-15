@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:json_annotation/json_annotation.dart';
 import 'package:storetools/entity/goods_sku_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 
@@ -17,6 +18,16 @@ class GoodsEntity {
   String? coverUrl;
   //sku组
   List<GoodsSkuGroupEntity> skuGroups = [];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'thirdPartyId': thirdPartyId,
+      'name': name,
+      'coverUrl': coverUrl,
+      'skuGroups': skuGroups
+    };
+  }
 
   ///将行数据转为商品数据，合并多个sku为一个商品
   static List<GoodsEntity>? fromRows(List<GoodsRowEntity>? rowEntities) {
