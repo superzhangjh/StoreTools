@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:excel/excel.dart';
+import 'package:storetools/asyncTask/async_task.dart';
+import 'package:storetools/asyncTask/data/isolate_data.dart';
 import 'package:storetools/excel/converter/xlsx_converter.dart';
 import 'package:storetools/excel/entity/parser_info.dart';
 import 'package:storetools/excel/parser/excel_parser.dart';
@@ -12,7 +14,7 @@ import 'package:storetools/excel/rowhelper/xlsx_row_helper.dart';
 class XlsxParser extends ExcelParser<XlsxConverter> {
   //解析容量
   static const parseCapacity = 100;
-  static const maxIsolateCount = 10;
+  static const maxIsolateCount = 100;
 
   XlsxParser(): super(fileExtensions: ['.xlsx', '.xls']);
 
@@ -25,56 +27,57 @@ class XlsxParser extends ExcelParser<XlsxConverter> {
     int tableIndex = 0;
     for (var tableName in excel.tables.keys) {
       var table = excel.tables[tableName];
+      print("开始执行 tableName:$tableName");
+      var startTime = DateTime.now();
       if (table != null) {
-        parallelParse(table);
-        var maxRows = table.maxRows;
-        if (maxRows > 1) {
-          RowHelper rowHelper = XlsxRowHelper(rowData: table.rows[0]);
-          for (var i=0; i<maxRows; i+=parseCapacity) {
-            table.rows.sublist(i, min(maxRows, i + parseCapacity));
-          }
-        }
-        RowHelper? rowHelper;
-        for (var i=0; i<table.rows.length; i++) {
-          //回调解析进度
-          if (parserCallback != null) {
-            parserCallback!(ParserProgress(tableIndex: tableIndex, rowIndex: i, rowTotal: table.maxRows));
-          }
-
-          var row = table.rows[i];
-          if (i == 0) {
-            //生成标题解析器
-            rowHelper = XlsxRowHelper(rowData: row);
-          } else if (rowHelper != null) {
-            list ??= [];
-            list.add(converter.covert(row, rowHelper));
-          }
+        //多任务解析数据，并添加到结果列表
+        for (var entities in await Future.wait(_parallelParse<T>(table, tableIndex, converter))) {
+          list ??= [];
+          list.addAll(entities);
         }
       }
+      var duration = DateTime.now().difference(startTime);
+      print("结束执行 耗时:${duration.inMilliseconds}毫秒");
       tableIndex++;
     }
 
     return Future(() => list);
   }
 
-  List<Future<List<Data?>>>? parallelParse(Sheet sheet) {
+  List<Future<List<T>>> _parallelParse<T>(Sheet sheet, int tableIndex, XlsxConverter converter) {
     var maxRows = sheet.maxRows;
-    List<Future<List<Data?>>>? futures;
+    List<Future<List<T>>>? futures = [];
     if (maxRows > 1) {
       RowHelper rowHelper = XlsxRowHelper(rowData: sheet.rows[0]);
       var parallelCount = min(maxIsolateCount, (maxRows / parseCapacity).ceil());
       var capacity = (maxRows / parallelCount).ceil();
       for (var i=0; i<maxRows; i+=capacity) {
-        futures ??= [];
-        // futures.add(parseOnIsolate(rowHelper, sheet.rows.sublist(i, min(maxRows, i + capacity))));
+        //通过隔离异步执行
+        var completer = Completer<List<T>>();
+        var rows = sheet.rows.sublist(i, min(maxRows, i + capacity));
+        print("分段执行 start:$i end:${i+capacity} maxRows:$maxRows");
+        asyncTaskWithTriple<List<T>, XlsxConverter, RowHelper, List<List<Data?>>>(converter, rowHelper, rows, doInBackground<T>, onReceive: (data) {
+          completer.complete(data);
+        });
+        //添加到future列表
+        futures.add(completer.future.then((value) {
+          //回调进度
+          if (parserCallback != null) {
+            parserCallback!(ParserProgress(tableIndex: tableIndex, rowIndex: i + rows.length, rowTotal: maxRows));
+          }
+          return value;
+        }));
       }
     }
-    Completer<List<Data?>> completer = Completer();
-
     return futures;
   }
+}
 
-  // Future<List<List<Data?>>> parseOnIsolate(RowHelper rowHelper, List<List<Data?>> data) {
-  //
-  // }
+void doInBackground<T>(TripleIsolateData<List<T>, XlsxConverter, RowHelper, List<List<Data?>>> isolateData) {
+  List<T> data = [];
+  for (var row in isolateData.param3) {
+    var entity = isolateData.param1.covert(row, isolateData.param2);
+    data.add(entity);
+  }
+  isolateData.emitter.emit(data);
 }

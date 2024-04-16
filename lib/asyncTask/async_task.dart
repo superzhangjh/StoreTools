@@ -6,14 +6,14 @@ import 'async_emitter.dart';
 import 'data/isolate_data.dart';
 
 ///不带参数的隔离任务
-Future<AsyncOwner<T>> asyncTask<T>(
+AsyncOwner<T> asyncTask<T>(
     Function(IsolateData<T> isolateData) doInBackground, {
       Function(T? data)? onReceive
     }
 ) => _asyncTask<T, IsolateData<T>>(doInBackground, onReceive, (emitter) => IsolateData(emitter));
 
 ///带单个参数的隔离任务
-Future<AsyncOwner<T>> asyncTaskWithSingle<T, P>(
+AsyncOwner<T> asyncTaskWithSingle<T, P>(
     P param,
     Function(SingleIsolateData<T, P> isolateData) doInBackground, {
       Function(T? data)? onReceive
@@ -21,7 +21,7 @@ Future<AsyncOwner<T>> asyncTaskWithSingle<T, P>(
 ) => _asyncTask<T, SingleIsolateData<T, P>>(doInBackground, onReceive, (emitter) => SingleIsolateData(emitter, param));
 
 ///带两个参数的隔离任务
-Future<AsyncOwner<T>> asyncTaskWithPair<T, P1, P2>(
+AsyncOwner<T> asyncTaskWithPair<T, P1, P2>(
     P1 param1,
     P2 param2,
     Function(PairIsolateData<T, P1, P2> isolateData) doInBackground, {
@@ -30,7 +30,7 @@ Future<AsyncOwner<T>> asyncTaskWithPair<T, P1, P2>(
 ) => _asyncTask<T, PairIsolateData<T, P1, P2>>(doInBackground, onReceive, (emitter) => PairIsolateData(emitter, param1, param2));
 
 ///带三个参数的隔离任务
-Future<AsyncOwner<T>> asyncTaskWithTriple<T, P1, P2, P3>(
+AsyncOwner<T> asyncTaskWithTriple<T, P1, P2, P3>(
     P1 param1,
     P2 param2,
     P3 param3,
@@ -40,7 +40,7 @@ Future<AsyncOwner<T>> asyncTaskWithTriple<T, P1, P2, P3>(
 ) => _asyncTask<T, TripleIsolateData<T, P1, P2, P3>>(doInBackground, onReceive, (emitter) => TripleIsolateData(emitter, param1, param2, param3));
 
 ///带四个参数的隔离任务
-Future<AsyncOwner<T>> asyncTaskWithQuadruple<T, P1, P2, P3, P4>(
+AsyncOwner<T> asyncTaskWithQuadruple<T, P1, P2, P3, P4>(
     P1 param1,
     P2 param2,
     P3 param3,
@@ -54,17 +54,17 @@ Future<AsyncOwner<T>> asyncTaskWithQuadruple<T, P1, P2, P3, P4>(
 ///[data]传输到隔离的数据，不能直接调用隔离区外的代码，如果有初始化参数由此传入
 ///[doInBackground]异步任务，必须在顶层函数或者static方法
 ///[onReceive]接收数据
-Future<AsyncOwner<T>> _asyncTask<T, I extends IsolateData<T>>(
+AsyncOwner<T> _asyncTask<T, I extends IsolateData<T>>(
     Function(I) doInBackground,
     Function(T? data)? onReceive,
     I Function(AsyncEmitter<T> emitter) generateIsolateData
-) async {
+) {
   var receivePort = ReceivePort();
   var emitter = AsyncEmitter<T>(receivePort.sendPort);
   var asyncOwner = AsyncOwner<T>(emitter);
 
   //执行异步操作
-  await Isolate.spawn(doInBackground, generateIsolateData(emitter));
+  Isolate.spawn(doInBackground, generateIsolateData(emitter));
 
   //监听隔离的数据
   receivePort.listen((message) {

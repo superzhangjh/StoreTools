@@ -77,7 +77,7 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
 
   void decodeExcel(String? path) async {
     if (path == null) return null;
-    var isolate = await ExcelKit.getInstance().encode(
+    var isolate = ExcelKit.getInstance().encode(
         path,
         GoodsConverter(),
         (data) => {

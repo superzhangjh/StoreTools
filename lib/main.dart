@@ -147,9 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             TextButton(
                 onPressed: () {
-                  asyncTaskWithSingle<String, String>("你好1", doTask, onReceive: (data) {
-                    print("收到任务结果:$data");
-                  });
+                  // asyncTaskWithSingle<String, String>("你好1", doTask, onReceive: (data) {
+                  //   print("收到任务结果:$data");
+                  // });
                 },
                 child: const Text("AsyncTask")
             )

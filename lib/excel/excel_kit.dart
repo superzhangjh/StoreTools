@@ -30,7 +30,7 @@ class ExcelKit {
   ///[converter]格式转换器
   ///[onResult]转换结果
   ///[onProgress]转换进度
-  Future<AsyncOwner?> encode<T>(
+  AsyncOwner? encode<T>(
       String? filePath,
       ExcelConverter<T, dynamic> converter,
       Function(List<T>?) onResult, {
@@ -44,15 +44,15 @@ class ExcelKit {
               case ParserInfo.statusComplete:
                 onResult(data!.data);
                 break;
-                case ParserInfo.statusProgress:
-                  if (onProgress != null) onProgress(data!.progress);
-                  break;
+              case ParserInfo.statusProgress:
+                if (onProgress != null) onProgress(data!.progress);
+                break;
             }
           });
         }
       }
     }
-    return Future(() => null);
+    return null;
   }
 }
 
