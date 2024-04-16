@@ -1,10 +1,10 @@
-class ParserInfo {
+class ParserInfo<T> {
   static const statusProgress = 0;
   static const statusComplete = 1;
 
   int status;
   ParserProgress? progress;
-  List<dynamic>? data;
+  List<T>? data;
 
   ParserInfo({
     required this.status,
@@ -12,9 +12,9 @@ class ParserInfo {
     this.data
   });
 
-  factory ParserInfo.progress(ParserProgress? progress) => ParserInfo(status: statusProgress, progress: progress);
+  factory ParserInfo.progress(ParserProgress? progress) => ParserInfo<T>(status: statusProgress, progress: progress);
 
-  factory ParserInfo.complete(List<dynamic>? data) => ParserInfo(status: statusComplete, data: data);
+  factory ParserInfo.complete(List<T>? data) => ParserInfo<T>(status: statusComplete, data: data);
 
   Map<String, dynamic> toJson() => {
     'status': status,

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:leancloud_storage/leancloud.dart';
+import 'package:storetools/asyncTask/async_emitter.dart';
+import 'package:storetools/asyncTask/async_task.dart';
 import 'package:storetools/const/routes.dart';
 import 'package:storetools/ui/goods_edit_page.dart';
 import 'package:storetools/ui/goods_page.dart';
 import 'package:storetools/ui/goods_preview_page.dart';
+
+import 'asyncTask/data/isolate_data.dart';
 
 void main() async {
   await initializeApp();
@@ -140,6 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.pushNamed(context, Routes.goods)
                 },
                 child: const Text("商品页")
+            ),
+            TextButton(
+                onPressed: () {
+                  asyncTaskWithSingle<String, String>("你好1", doTask, onReceive: (data) {
+                    print("收到任务结果:$data");
+                  });
+                },
+                child: const Text("AsyncTask")
             )
           ],
         ),
@@ -151,4 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+void doTask(SingleIsolateData<String, String> isolateData) {
+  isolateData.emitter.emit(isolateData.param);
 }

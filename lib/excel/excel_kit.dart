@@ -1,12 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:isolate';
 
+import 'package:storetools/asyncTask/async_owner.dart';
+import 'package:storetools/asyncTask/async_task.dart';
 import 'package:storetools/excel/callback/parser_callback.dart';
 import 'package:storetools/excel/converter/excel_converter.dart';
 import 'package:storetools/excel/entity/parser_info.dart';
 import 'package:storetools/excel/parser/excel_parser.dart';
 import 'package:storetools/excel/parser/xlsx_parser.dart';
+
+import '../asyncTask/data/isolate_data.dart';
 
 class ExcelKit {
   static ExcelKit? _instance;
@@ -28,7 +30,7 @@ class ExcelKit {
   ///[converter]格式转换器
   ///[onResult]转换结果
   ///[onProgress]转换进度
-  Future<Isolate>? encode<T>(
+  Future<AsyncOwner?> encode<T>(
       String? filePath,
       ExcelConverter<T, dynamic> converter,
       Function(List<T>?) onResult, {
@@ -37,63 +39,27 @@ class ExcelKit {
     for (var parser in _excelParsers) {
       for (var ext in parser.fileExtensions) {
         if (filePath?.endsWith(ext) == true) {
-          return encodeIo(parser, filePath, converter, (info) {
-            switch (info.status) {
+          return asyncTaskWithTriple<ParserInfo<T>, ExcelParser, String, ExcelConverter>(parser, filePath!, converter, executeIo, onReceive: (data) {
+            switch (data?.status) {
               case ParserInfo.statusComplete:
-                // onResult(info.data as? List<T>?);
+                onResult(data!.data);
                 break;
-              case ParserInfo.statusProgress:
-                if (onProgress != null) onProgress(info.progress);
-                break;
+                case ParserInfo.statusProgress:
+                  if (onProgress != null) onProgress(data!.progress);
+                  break;
             }
           });
         }
       }
     }
-    return null;
+    return Future(() => null);
   }
 }
 
-Future<Isolate> encodeIo<T>(ExcelParser parser, String? filePath, ExcelConverter<T, dynamic> converter, Function(ParserInfo) onInfo) async {
-  var receivePort = ReceivePort();
-  var isolate = await Isolate.spawn(
-      newThread,
-      ThreadOwner<T>(
-          uiSendPort: receivePort.sendPort,
-          parser: parser,
-          filePath: filePath,
-          converter: converter
-      )
-  );
-  receivePort.listen((message) {
-    ///这里接收来自子线程的消息，回调出去
-    print("接收子线程消息:${jsonEncode(message)}");
-    onInfo(message);
-  });
-  return isolate;
-}
-
-///必须为顶层函数，否则会报错
-void newThread<T>(ThreadOwner owner) {
-  owner.parser.parserCallback = (progress) {
-    print("进度发生改变${jsonEncode(progress)}");
-    owner.uiSendPort.send(ParserInfo.progress(progress));
+void executeIo<T>(TripleIsolateData<ParserInfo<T>, ExcelParser, String, ExcelConverter> isolateData) async {
+  isolateData.param1.parserCallback = (progress) {
+    isolateData.emitter.emit(ParserInfo<T>.progress(progress));
   };
-  owner.parser.parse<T>(owner.filePath!, owner.converter).then((value) {
-    owner.uiSendPort.send(ParserInfo.complete(value));
-  });
-}
-
-class ThreadOwner<T> {
-  SendPort uiSendPort;
-  ExcelParser parser;
-  String? filePath;
-  ExcelConverter<T, dynamic> converter;
-
-  ThreadOwner({
-    required this.uiSendPort,
-    required this.parser,
-    required this.filePath,
-    required this.converter
-  });
+  var data = await isolateData.param1.parse<T>(isolateData.param2, isolateData.param3);
+  isolateData.emitter.emit(ParserInfo<T>.complete(data));
 }
