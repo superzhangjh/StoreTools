@@ -4,7 +4,7 @@ abstract class BasePage extends StatefulWidget {
   const BasePage({super.key});
 }
 
-abstract class BaseState<T extends BasePage> extends State<BasePage> {
+abstract class BaseState<T extends BasePage> extends State<T> {
   var _isInitializedContext = false;
 
   @override

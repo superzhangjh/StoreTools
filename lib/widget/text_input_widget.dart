@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class TextInputWidget extends StatefulWidget {
+  final TextEditingController controller;
   final String label;
   final String? value;
+  final bool? obscureText;
 
-  const TextInputWidget({super.key, required this.label, this.value});
+  const TextInputWidget({super.key, required this.controller, required this.label, this.value, this.obscureText});
 
   @override
   State<StatefulWidget> createState() {
@@ -13,8 +15,6 @@ class TextInputWidget extends StatefulWidget {
 }
 
 class TextInputState extends State<TextInputWidget> {
-  final TextEditingController _controller = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return buildTextField();
@@ -28,7 +28,8 @@ class TextInputState extends State<TextInputWidget> {
     return Padding(
         padding: const EdgeInsets.all(10),
       child: TextField(
-        controller: _controller,
+        obscureText: widget.obscureText ?? false,
+        controller: widget.controller,
         decoration: InputDecoration(
           labelText: widget.label,
           border: const OutlineInputBorder()
@@ -39,7 +40,7 @@ class TextInputState extends State<TextInputWidget> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 }

@@ -12,13 +12,13 @@ import 'package:storetools/excel/rowhelper/row_helper.dart';
 import 'package:storetools/excel/rowhelper/xlsx_row_helper.dart';
 
 class XlsxParser extends ExcelParser<XlsxConverter> {
+  //isolate数量
+  static const maxIsolateCount = 1;
   //解析容量
   static const parseCapacity = 100;
-  static const maxIsolateCount = 100;
 
   XlsxParser(): super(fileExtensions: ['.xlsx', '.xls']);
 
-  ///todo：修改成多个线程同时执行解析工作
   @override
   Future<List<T>?> parse<T>(String filePath, XlsxConverter converter) async {
     var bytes = await File(filePath).readAsBytes();
@@ -49,9 +49,10 @@ class XlsxParser extends ExcelParser<XlsxConverter> {
     List<Future<List<T>>>? futures = [];
     if (maxRows > 1) {
       RowHelper rowHelper = XlsxRowHelper(rowData: sheet.rows[0]);
+      //获取最小isolate数
       var parallelCount = min(maxIsolateCount, (maxRows / parseCapacity).ceil());
       var capacity = (maxRows / parallelCount).ceil();
-      for (var i=0; i<maxRows; i+=capacity) {
+      for (var i=1; i<maxRows; i+=capacity) {
         //通过隔离异步执行
         var completer = Completer<List<T>>();
         var rows = sheet.rows.sublist(i, min(maxRows, i + capacity));

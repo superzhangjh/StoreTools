@@ -62,4 +62,5 @@ void executeIo<T>(TripleIsolateData<ParserInfo<T>, ExcelParser, String, ExcelCon
   };
   var data = await isolateData.param1.parse<T>(isolateData.param2, isolateData.param3);
   isolateData.emitter.emit(ParserInfo<T>.complete(data));
+  isolateData.emitter.close();
 }

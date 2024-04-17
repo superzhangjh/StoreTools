@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:leancloud_storage/leancloud.dart';
-import 'package:storetools/asyncTask/async_emitter.dart';
-import 'package:storetools/asyncTask/async_task.dart';
 import 'package:storetools/const/routes.dart';
 import 'package:storetools/ui/goods_edit_page.dart';
 import 'package:storetools/ui/goods_page.dart';
 import 'package:storetools/ui/goods_preview_page.dart';
+import 'package:storetools/ui/home_page.dart';
+import 'package:storetools/ui/login_page.dart';
+import 'package:storetools/ui/splash_page.dart';
 
 import 'asyncTask/data/isolate_data.dart';
 
@@ -51,13 +52,17 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: Routes.root,
+      initialRoute: Routes.splash,
       routes: {
+        Routes.splash: (_) => const SplashPage(),
+        Routes.login: (_) => const LoginPage(),
+        Routes.home: (_) => const HomePage(),
         Routes.root: (_) => const MyHomePage(title: "主页"),
         Routes.goods: (_) => const GoodsPage(),
         Routes.goodsEdit: (_) => const GoodsEditPage(),
         Routes.goodsPreview: (_) => const GoodsPreviewPage()
       },
+      debugShowCheckedModeBanner: false,
       // home: const MyHomePage(title: "主页"),
     );
   }

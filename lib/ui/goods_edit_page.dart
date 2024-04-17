@@ -23,18 +23,18 @@ class GoodsEditState extends State<GoodsEditPage> {
       body: Center(
         child: Column(
           children: [
-            const TextInputWidget(label: '名称'),
-            TextButton(
-              child: const Text("新增SKU组"),
-              onPressed: () => {
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return SkuGroupEditBottomSheet();
-                      }
-                  )
-              },
-            )
+            // const TextInputWidget(label: '名称'),
+            // TextButton(
+            //   child: const Text("新增SKU组"),
+            //   onPressed: () => {
+            //       showModalBottomSheet(
+            //           context: context,
+            //           builder: (context) {
+            //             return SkuGroupEditBottomSheet();
+            //           }
+            //       )
+            //   },
+            // )
           ],
         ),
       ),

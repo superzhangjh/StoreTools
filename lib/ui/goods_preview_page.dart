@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:storetools/asyncTask/async_owner.dart';
 import 'package:storetools/base/base_page.dart';
-import 'package:storetools/entity/goods_entity.dart';
 import 'package:storetools/excel/converter/business/goods_coverter.dart';
 import 'package:storetools/excel/excel_kit.dart';
+import 'package:storetools/ui/goods/goods_detail_page.dart';
+import 'package:storetools/ui/goods/goods_item_view.dart';
 import 'package:storetools/utils/route_arguments_utils.dart';
+
+import '../entity/goods_entity.dart';
 
 ///商品审核
 class GoodsPreviewPage extends BasePage {
@@ -20,6 +26,10 @@ class GoodsPreviewPage extends BasePage {
 }
 
 class GoodsState extends BaseState<GoodsPreviewPage> {
+  AsyncOwner? _excelOwner;
+  List<GoodsEntity>? _data;
+  late StreamController<int> _streamController;
+  
   @override
   void initState() {
     super.initState();
@@ -31,57 +41,17 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
     super.initBuildContext(context);
     decodeExcel(getArgument(context, 'filePath'));
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('商品审核')),
-      // body: FutureBuilder(
-      //     future: decodeExcel(getArgument(context, 'filePath')),
-      //     builder: (context, snapshot) {
-      //       if (snapshot.connectionState == ConnectionState.done) {
-      //         var data = snapshot.data;
-      //         return ListView.builder(
-      //             itemCount: data?.length ?? 0,
-      //             itemBuilder: (context, index) {
-      //               var item = data?[index];
-      //               return ListTile(
-      //                 title: Text('$index${item?.name}'),
-      //                 onTap: () async {
-      //
-      //                 },
-      //               );
-      //             }
-      //         );
-      //       }
-      //       return StreamBuilder(
-      //           stream: _streamController.stream,
-      //           builder: (context, snapshot) {
-      //             print("当前进度:${snapshot.data}");
-      //             return Text("当前进度:${snapshot.data}");
-      //           }
-      //       );
-      //     }
-      // )
-      body: StreamBuilder(
-          stream: _streamController.stream,
-          builder: (context, snapshot) {
-            print("当前进度:${snapshot.data}");
-            return Text("当前进度:${snapshot.data}");
-          }
-      )
-    );
-  }
-
-  late StreamController<int> _streamController;
-
+  
   void decodeExcel(String? path) async {
     if (path == null) return null;
-    var isolate = ExcelKit.getInstance().encode(
+    _excelOwner?.close();
+    _excelOwner = ExcelKit.getInstance().encode(
         path,
         GoodsConverter(),
-        (data) => {
-
+            (data) {
+          setState(() {
+            _data = GoodsEntity.fromRows(data) ?? [];
+          });
         },
         onProgress: (progress) {
           _streamController.sink.add(progress?.rowIndex ?? 0);
@@ -90,8 +60,39 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
   }
 
   @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('商品审核')),
+      body: _data == null? buildLoading(context): buildList(context)
+    );
+  }
+  
+  Widget buildLoading(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+  
+  Widget buildList(BuildContext context) {
+    return ListView.builder(
+        itemCount: _data?.length ?? 0,
+        itemBuilder: (context, index) {
+          var item = _data![index];
+          return ListTile(
+            title: GoodsItemView(goodsEntity: item),
+            onTap: () async {
+              log("商品信息: ${jsonEncode(item)}");
+              showGoodsDetailBottomSheet(context, item);
+            },
+          );
+        }
+    );
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _streamController.close();
+    _excelOwner?.close();
   }
 }
