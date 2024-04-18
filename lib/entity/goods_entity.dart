@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:json_annotation/json_annotation.dart';
 import 'package:storetools/entity/goods_sku_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 

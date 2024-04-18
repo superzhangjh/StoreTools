@@ -48,6 +48,9 @@ dependencies:
   #excel解析
   excel: ^4.0.3
 
+  #图标库
+  font_awesome_flutter: ^10.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
