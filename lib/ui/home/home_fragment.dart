@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:storetools/base/base_page.dart';
+import 'package:storetools/entity/shop_entity.dart';
 
 class HomeFragment extends BasePage {
-  const HomeFragment({super.key});
+  final ShopEntity shopEntity;
+
+  const HomeFragment({super.key, required this.shopEntity});
 
   @override
   State<StatefulWidget> createState() {

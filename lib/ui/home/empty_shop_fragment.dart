@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:storetools/api/api.dart';
 import 'package:storetools/base/base_page.dart';
@@ -7,7 +9,9 @@ import 'package:storetools/utils/toast_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
 
 class EmptyShopFragment extends BasePage {
-  const EmptyShopFragment({super.key});
+  final ValueChanged<String?> onShopChanged;
+
+  const EmptyShopFragment({super.key, required this.onShopChanged});
 
   @override
   State<StatefulWidget> createState() {
@@ -16,7 +20,7 @@ class EmptyShopFragment extends BasePage {
 }
 
 class EmptyShopState extends BaseState<EmptyShopFragment> {
-  final _inputController = TextEditingController();
+  TextEditingController? _inputController;
 
   @override
   Widget build(BuildContext context) {
@@ -24,23 +28,24 @@ class EmptyShopState extends BaseState<EmptyShopFragment> {
       child: Column(
         children: [
           TextButton(
-              onPressed: () {
-                _inputController.clear();
-                _showChooseDialog(
+              onPressed: () async {
+                _inputController = TextEditingController();
+                var shopId = await _showChooseDialog(
                     '创建店铺',
-                    _inputController,
+                    _inputController!,
                     '店铺名称',
                     _createShop
                 );
+                widget.onShopChanged(shopId);
               },
               child: const Text("创建店铺")
           ),
           TextButton(
               onPressed: () {
-                _inputController.clear();
+                _inputController = TextEditingController();
                 _showChooseDialog(
                     '加入店铺',
-                    _inputController,
+                    _inputController!,
                     '店铺ID', () {
                       showToast("该功能未实现");
                     }
@@ -54,7 +59,7 @@ class EmptyShopState extends BaseState<EmptyShopFragment> {
   }
 
   _createShop() async {
-    var name = _inputController.text.trim();
+    var name = _inputController!.text.trim();
     if (name.isEmpty) {
       showToast('店铺名不能为空');
       return;
@@ -62,14 +67,15 @@ class EmptyShopState extends BaseState<EmptyShopFragment> {
     var shop = ShopEntity();
     shop.name = name;
     var newShop = await Api.createOrUpdate(shop);
+    print("创建店铺结果:${jsonEncode(newShop)}");
     if (newShop != null && newShop.objectId?.isNotEmpty == true && await UserKit.setShopId(newShop.objectId!)) {
       showToast("创建成功");
-      Navigator.pop(context);
+      Navigator.pop(context, newShop.objectId);
     }
   }
 
-  _showChooseDialog(String title, TextEditingController controller, String label, VoidCallback? onConfirm) {
-    showDialog(
+  Future<String?> _showChooseDialog(String title, TextEditingController controller, String label, VoidCallback? onConfirm) {
+    return showDialog<String>(
         context: context,
         builder: (context) {
           return AlertDialog(

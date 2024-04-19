@@ -1,6 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:storetools/api/api.dart';
+import 'package:storetools/api/api_entity.dart';
 import 'package:storetools/base/base_page.dart';
+import 'package:storetools/const/apis.dart';
+import 'package:storetools/entity/shop_entity.dart';
+import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/home/home_fragment.dart';
 import 'package:storetools/ui/home/mine_fragment.dart';
 import 'package:storetools/user/user_kit.dart';
@@ -23,20 +31,19 @@ class HomeState extends BaseState<HomePage> {
   final _pageController = PageController();
   int _currentIndex = 0;
   int popTimestamp = 0;
+  ShopEntity? _shopEntity;
+
+  @override
+  void initBuildContext(BuildContext context) async {
+    super.initBuildContext(context);
+    _refreshShop(await UserKit.getShopId());
+  }
 
   @override
   Widget build(BuildContext context) {
     return _buildPop(
         context: context, 
-        child: OnceFutureBuilder<String?>(
-            future: UserKit.getShopId(), 
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingView();
-              }
-              return _buildScaffold(context, snapshot.data);
-            }
-        )
+        child: _buildScaffold(context)
     );
   }
   
@@ -57,12 +64,13 @@ class HomeState extends BaseState<HomePage> {
     );
   }
   
-  Widget _buildScaffold(BuildContext context, String? shopId) {
+  Widget _buildScaffold(BuildContext context) {
+    var shopEntity = _shopEntity;
     var fragments = <Widget>[];
-    if (shopId?.isNotEmpty == true) {
-      fragments.add(const HomeFragment());
+    if (shopEntity?.objectId?.isNotEmpty == true) {
+      fragments.add(HomeFragment(shopEntity: shopEntity!));
     } else {
-      fragments.add(const EmptyShopFragment());
+      fragments.add(EmptyShopFragment(onShopChanged: _refreshShop));
     }
     fragments.add(const MineFragment());
     
@@ -97,5 +105,15 @@ class HomeState extends BaseState<HomePage> {
             items: barItems
         )
     );
+  }
+
+  ///刷新店铺
+  void _refreshShop(String? shopId) async {
+    if (shopId == null) return;
+    var shops = await Api.whereEqualTo(ShopEntity(), Apis.lcFieldObjectId, shopId);
+    log("查询到的店铺id:${jsonEncode(shops)}");
+    setState(() {
+      _shopEntity = shops?.getSafeOfNull(0);
+    });
   }
 }
