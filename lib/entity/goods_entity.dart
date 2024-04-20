@@ -1,16 +1,21 @@
-import 'dart:convert';
 
+import 'package:storetools/const/apis.dart';
 import 'package:storetools/entity/goods_sku_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
+import 'package:storetools/ext/map_ext.dart';
 
+import '../api/entity/api_entity.dart';
 import 'goods_row_entity.dart';
 import 'goods_sku_group_entity.dart';
 
-class GoodsEntity {
-  //id
-  String id = '';
+class GoodsEntity implements ApiEntity<GoodsEntity> {
+  @override String className =  Apis.lcNameGoods;
+  @override String? objectId;
+
   //第三方的id
   String thirdPartyId = '';
+  //店铺id
+  String shopId = '';
   //名称
   String name = '';
   //封面图
@@ -18,18 +23,30 @@ class GoodsEntity {
   //sku组
   List<GoodsSkuGroupEntity> skuGroups = [];
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'thirdPartyId': thirdPartyId,
-      'name': name,
-      'coverUrl': coverUrl,
-      'skuGroups': skuGroups
-    };
+  @override
+  Map<String, dynamic> toJson() => {
+    'objectId': objectId,
+    'thirdPartyId': thirdPartyId,
+    'shopId': shopId,
+    'name': name,
+    'coverUrl': coverUrl,
+    'skuGroups': skuGroups
+  };
+
+  @override
+  GoodsEntity fromJson(Map<String, dynamic> json) {
+    objectId = json['objectId'];
+    thirdPartyId = json['thirdPartyId'];
+    shopId = json['shopId'];
+    name = json['name'];
+    coverUrl = json['coverUrl'];
+    skuGroups = json.getList('skuGroups', converter: (e) => GoodsSkuGroupEntity().fromJson(e)) ?? [];
+    return this;
   }
 
   ///将行数据转为商品数据，合并多个sku为一个商品
-  static List<GoodsEntity>? fromRows(List<GoodsRowEntity>? rowEntities) {
+  ///[shopId]店铺id
+  static List<GoodsEntity>? fromRows(List<GoodsRowEntity>? rowEntities, String? shopId) {
     if (rowEntities == null || rowEntities.isEmpty) return null;
     List<GoodsEntity> goodsList = [];
     Map<String, GoodsEntity?> goodsMap = {};
@@ -39,6 +56,7 @@ class GoodsEntity {
       if (goodsEntity == null) {
         //创建商品
         goodsEntity = GoodsEntity();
+        goodsEntity.shopId = shopId ?? "";
         goodsEntity.thirdPartyId = element.thirdPartyId;
         goodsEntity.name = element.name;
         goodsEntity.coverUrl = element.skuCoverUrl;

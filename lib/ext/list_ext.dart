@@ -1,5 +1,5 @@
-///下标安全判断获取List的值
 extension ListExt<T> on List<T> {
+  ///下标安全判断获取List的值
   T? getSafeOfNull(int? index) {
     if (index != null && index >= 0 && index < length) {
       return this[index];

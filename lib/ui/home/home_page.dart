@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:storetools/api/api.dart';
-import 'package:storetools/api/api_entity.dart';
+import 'package:storetools/api/entity/api_entity.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/const/apis.dart';
 import 'package:storetools/entity/shop_entity.dart';
@@ -13,8 +13,6 @@ import 'package:storetools/ui/home/home_fragment.dart';
 import 'package:storetools/ui/home/mine_fragment.dart';
 import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/toast_utils.dart';
-import 'package:storetools/widget/loading_view.dart';
-import 'package:storetools/widget/once_future_builder.dart';
 
 import 'empty_shop_fragment.dart';
 
@@ -84,9 +82,6 @@ class HomeState extends BaseState<HomePage> {
         label: '我的'
     ));
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("首页"),
-        ),
         body: PageView(
           controller: _pageController,
           onPageChanged: (index) {
@@ -110,10 +105,15 @@ class HomeState extends BaseState<HomePage> {
   ///刷新店铺
   void _refreshShop(String? shopId) async {
     if (shopId == null) return;
-    var shops = await Api.whereEqualTo(ShopEntity(), Apis.lcFieldObjectId, shopId);
-    log("查询到的店铺id:${jsonEncode(shops)}");
-    setState(() {
-      _shopEntity = shops?.getSafeOfNull(0);
-    });
+    var result = await Api.whereEqualTo(ShopEntity(), Apis.lcFieldObjectId, shopId);
+    if (result.isSuccess()) {
+      var shops = result.data;
+      log("查询到的店铺id:${jsonEncode(shops)}");
+      setState(() {
+        _shopEntity = shops?.getSafeOfNull(0);
+      });
+    } else {
+      showToast(result.msg);
+    }
   }
 }

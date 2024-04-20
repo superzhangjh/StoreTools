@@ -1,4 +1,4 @@
-import 'package:storetools/api/api_entity.dart';
+import 'package:storetools/api/entity/api_entity.dart';
 import 'package:storetools/const/apis.dart';
 
 ///店铺
@@ -9,10 +9,9 @@ class ShopEntity implements ApiEntity<ShopEntity> {
 
   @override
   ShopEntity fromJson(Map<String, dynamic> json) {
-    var entity = ShopEntity();
-    entity.objectId = json['objectId'];
-    entity.name = json['name'];
-    return entity;
+    objectId = json['objectId'];
+    name = json['name'];
+    return this;
   }
 
   @override

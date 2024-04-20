@@ -9,6 +9,7 @@ import 'package:storetools/excel/converter/business/goods_coverter.dart';
 import 'package:storetools/excel/excel_kit.dart';
 import 'package:storetools/ui/goods/goods_detail_page.dart';
 import 'package:storetools/ui/goods/goods_item_view.dart';
+import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/route_arguments_utils.dart';
 
 import '../entity/goods_entity.dart';
@@ -48,9 +49,10 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
     _excelOwner = ExcelKit.getInstance().encode(
         path,
         GoodsConverter(),
-            (data) {
+        (data) async {
+          var shopId = await  UserKit.getShopId();
           setState(() {
-            _data = GoodsEntity.fromRows(data) ?? [];
+            _data = GoodsEntity.fromRows(data, shopId) ?? [];
           });
         },
         onProgress: (progress) {
@@ -82,7 +84,8 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
             title: GoodsItemView(goodsEntity: item),
             onTap: () async {
               log("商品信息: ${jsonEncode(item)}");
-              showGoodsDetailBottomSheet(context, item);
+              var result = await showGoodsDetailBottomSheet(context, item);
+              log("商品结果: ${jsonEncode(result)}");
             },
           );
         }

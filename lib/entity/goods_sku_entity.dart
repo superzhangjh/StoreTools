@@ -1,5 +1,7 @@
+import 'package:storetools/entity/base_entity.dart';
+
 ///sku
-class GoodsSkuEntity {
+class GoodsSkuEntity implements BaseEntity<GoodsSkuEntity> {
   //id
   String id = '';
   //名称
@@ -13,14 +15,24 @@ class GoodsSkuEntity {
   //成本价
   double? costPrice;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'nickName': nickName,
-      'coverUrl': coverUrl,
-      'price': price,
-      'costPrice': costPrice
-    };
+  @override
+  GoodsSkuEntity fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    nickName = json['nickName'];
+    coverUrl = json['coverUrl'];
+    price = json['price'];
+    costPrice = json['costPrice'];
+    return this;
   }
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'nickName': nickName,
+    'coverUrl': coverUrl,
+    'price': price,
+    'costPrice': costPrice
+  };
 }

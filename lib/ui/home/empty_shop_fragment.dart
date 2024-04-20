@@ -66,11 +66,15 @@ class EmptyShopState extends BaseState<EmptyShopFragment> {
     }
     var shop = ShopEntity();
     shop.name = name;
-    var newShop = await Api.createOrUpdate(shop);
-    print("创建店铺结果:${jsonEncode(newShop)}");
-    if (newShop != null && newShop.objectId?.isNotEmpty == true && await UserKit.setShopId(newShop.objectId!)) {
-      showToast("创建成功");
-      Navigator.pop(context, newShop.objectId);
+    var result = await Api.createOrUpdate(shop);
+    if (result.isSuccess()) {
+      var newShop = result.data;
+      if (newShop != null && newShop.objectId?.isNotEmpty == true && await UserKit.setShopId(newShop.objectId!)) {
+        showToast("创建成功");
+        Navigator.pop(context, newShop.objectId);
+      }
+    } else {
+      showToast(result.msg);
     }
   }
 

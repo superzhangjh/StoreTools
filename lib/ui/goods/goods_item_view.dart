@@ -3,7 +3,7 @@ import 'package:storetools/entity/goods_entity.dart';
 
 ///商品itemView
 class GoodsItemView extends StatefulWidget {
-  final GoodsEntity goodsEntity;
+  final GoodsEntity? goodsEntity;
 
   const GoodsItemView({super.key, required this.goodsEntity});
 
@@ -16,6 +16,6 @@ class GoodsItemView extends StatefulWidget {
 class GoodsItemState extends State<GoodsItemView> {
   @override
   Widget build(BuildContext context) {
-    return Text(widget.goodsEntity.name);
+    return Text(widget.goodsEntity?.name ?? "");
   }
 }

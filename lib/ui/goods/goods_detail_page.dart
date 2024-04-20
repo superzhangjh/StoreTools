@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:leancloud_storage/leancloud.dart';
+import 'package:storetools/api/api.dart';
 import 'package:storetools/entity/goods_entity.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
 import '../../base/base_page.dart';
 
 ///显示商品详情
-void showGoodsDetailBottomSheet(BuildContext context, GoodsEntity goodsEntity) {
-  showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      useSafeArea: true,
-      builder: (context) {
-        return GoodsDetailPage(goodsEntity: goodsEntity);
-      }
-  );
-}
+Future<GoodsEntity?> showGoodsDetailBottomSheet(
+    BuildContext context,
+    GoodsEntity goodsEntity
+) => showModalBottomSheet<GoodsEntity>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    useSafeArea: true,
+    builder: (context) {
+      return GoodsDetailPage(goodsEntity: goodsEntity);
+    }
+);
 
 ///商品详情
 class GoodsDetailPage extends BasePage {
@@ -99,14 +100,12 @@ class GoodsDetailState extends BaseState<GoodsDetailPage> {
   }
 
   _saveGoods() async {
-    var goods = LCObject('Goods');
-    var goodsEntity = widget.goodsEntity;
-    goods['name'] = goodsEntity.name;
-    goods['thirdPartyId'] = goodsEntity.thirdPartyId;
-    goods['coverUrl'] = goodsEntity.coverUrl;
-    goods['skuGroups'] = goodsEntity.skuGroups;
-    await goods.save();
-    showToast("保存成功");
-    Navigator.pop(context);
+    var result = await Api.createOrUpdate(widget.goodsEntity);
+    if (result.isSuccess()) {
+      showToast("保存成功");
+      Navigator.pop(context, result.data);
+    } else {
+      showToast(result.msg);
+    }
   }
 }

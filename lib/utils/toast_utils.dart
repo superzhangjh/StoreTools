@@ -12,3 +12,15 @@ void showToast(String? msg) {
       fontSize: 16
   );
 }
+
+void showLongToast(String? msg) {
+  if (msg == null || msg.isEmpty) {
+    return;
+  }
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      fontSize: 16
+  );
+}

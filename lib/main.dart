@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/const/routes.dart';
 import 'package:storetools/ui/goods_edit_page.dart';
-import 'package:storetools/ui/goods_page.dart';
+import 'package:storetools/ui/goods/goods_page.dart';
 import 'package:storetools/ui/goods_preview_page.dart';
 import 'package:storetools/ui/home/home_page.dart';
 import 'package:storetools/ui/login_page.dart';
