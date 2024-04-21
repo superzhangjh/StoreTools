@@ -17,13 +17,14 @@ class GoodsRowEntity implements BaseEntity<GoodsRowEntity> {
 
   @override
   GoodsRowEntity fromJson(Map<String, dynamic> json) {
-    thirdPartyId = json['thirdPartyId'];
-    name = json['name'];
-    skuId = json['skuId'];
-    skuName = json['skuName'];
-    skuCoverUrl = json['skuCoverUrl'];
-    skuPrice = json['skuPrice'];
-    return this;
+    final entity = GoodsRowEntity();
+    entity.thirdPartyId = json['thirdPartyId'];
+    entity.name = json['name'];
+    entity.skuId = json['skuId'];
+    entity.skuName = json['skuName'];
+    entity.skuCoverUrl = json['skuCoverUrl'];
+    entity.skuPrice = json['skuPrice'];
+    return entity;
   }
 
   @override

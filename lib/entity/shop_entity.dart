@@ -9,9 +9,10 @@ class ShopEntity implements ApiEntity<ShopEntity> {
 
   @override
   ShopEntity fromJson(Map<String, dynamic> json) {
-    objectId = json['objectId'];
-    name = json['name'];
-    return this;
+    final entity = ShopEntity();
+    entity.objectId = json['objectId'];
+    entity.name = json['name'];
+    return entity;
   }
 
   @override

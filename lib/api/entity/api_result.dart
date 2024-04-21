@@ -11,7 +11,7 @@ class ApiResult<T> {
 
   factory ApiResult.success(T? data) => ApiResult<T>(code: 200, data: data);
 
-  factory ApiResult.error(String? msg) => ApiResult<T>(code: -1, msg: msg);
+  factory ApiResult.error(String? msg) => ApiResult<T>(code: -1, msg: msg ?? '未知错误');
 
   bool isSuccess() => code == 200;
 }

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/api/entity/api_entity.dart';
 import 'package:storetools/api/entity/api_result.dart';
+import 'package:storetools/api/util/api_utils.dart';
 import 'package:storetools/const/apis.dart';
 
 class Api {
@@ -16,33 +17,15 @@ class Api {
       lcObject = LCObject(entity.className);
     }
     var entityMap = entity.toJson();
-    for (var key in entityMap.keys) {
-      //过滤不可修改的字段
-      switch (key) {
-        case Apis.lcFieldObjectId:
-          continue;
-        default:
-          lcObject[key] = entityMap[key];
-          break;
-      }
-    }
+    ApiUtils.fillMapToLcObject(entityMap, lcObject);
     try {
+      ///以服务器返回的值为准，将结果返回出去
       var newLcObject = await lcObject.save();
-      for (var key in entityMap.keys) {
-        switch (key) {
-          //预设的字段无法用[key]的方式获取
-          case Apis.lcFieldObjectId:
-            entityMap[key] = newLcObject.objectId;
-            break;
-          default:
-            entityMap[key] = newLcObject[key];
-            break;
-        }
-      }
+      ApiUtils.fillLcObjectToMap(newLcObject, entityMap);
       return Future(() => ApiResult.success(entity.fromJson(entityMap)));
-    } on Exception catch (e) {
-      log(e.toString());
-      return Future(() => ApiResult.error(e.toString()));
+    } on LCException catch (e) {
+      log(e.message ?? '未知错误');
+      return Future(() => ApiResult.error(e.message));
     }
   }
 
@@ -50,30 +33,23 @@ class Api {
   static Future<ApiResult<List<T>?>> whereEqualTo<T extends ApiEntity<T>>(T t, String key, dynamic value) async {
     try {
       var list = await LCQuery(t.className).whereEqualTo(key, value).find();
-      List<T>? result;
-      if (list?.isNotEmpty == true) {
-        result = <T>[];
-        for (var lcObject in list!) {
-          var json = <String, dynamic>{};
-          for (var key in t.toJson().keys) {
-            switch (key) {
-            //预设的字段无法用[key]的方式获取
-              case Apis.lcFieldObjectId:
-                json[key] = lcObject.objectId;
-                break;
-              default:
-                json[key] = lcObject[key];
-                break;
-            }
-          }
-          result.add(t.fromJson(json));
-        }
-      }
+      List<T>? result = ApiUtils.lcObjectsToList(list, t);
       return Future(() => ApiResult.success(result));
-    } catch (e) {
-      var errorMsg = e.toString();
-      log(errorMsg);
-      return Future(() => ApiResult.error(errorMsg));
+    } on LCException catch (e) {
+      log(e.message ?? '未知错误');
+      return Future(() => ApiResult.error(e.message));
+    }
+  }
+
+  ///查询全部
+  static Future<ApiResult<List<T>?>> queryAll<T extends ApiEntity<T>>(T t) async {
+    try {
+      var list = await LCQuery(t.className).find();
+      List<T>? result = ApiUtils.lcObjectsToList(list, t);
+      return Future(() => ApiResult.success(result));
+    } on LCException catch (e) {
+      log(e.message ?? '未知错误');
+      return Future(() => ApiResult.error(e.message));
     }
   }
 }

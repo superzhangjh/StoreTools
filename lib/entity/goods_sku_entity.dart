@@ -17,13 +17,14 @@ class GoodsSkuEntity implements BaseEntity<GoodsSkuEntity> {
 
   @override
   GoodsSkuEntity fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    nickName = json['nickName'];
-    coverUrl = json['coverUrl'];
-    price = json['price'];
-    costPrice = json['costPrice'];
-    return this;
+    final entity = GoodsSkuEntity();
+    entity.id = json['id'];
+    entity.name = json['name'];
+    entity.nickName = json['nickName'];
+    entity.coverUrl = json['coverUrl'];
+    entity.price = json['price'];
+    entity.costPrice = json['costPrice'];
+    return entity;
   }
 
   @override

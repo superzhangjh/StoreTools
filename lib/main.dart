@@ -6,6 +6,8 @@ import 'package:storetools/ui/goods/goods_page.dart';
 import 'package:storetools/ui/goods_preview_page.dart';
 import 'package:storetools/ui/home/home_page.dart';
 import 'package:storetools/ui/login_page.dart';
+import 'package:storetools/ui/producer/producer_editor_page.dart';
+import 'package:storetools/ui/producer/producer_home_page.dart';
 import 'package:storetools/ui/splash_page.dart';
 
 import 'asyncTask/data/isolate_data.dart';
@@ -44,7 +46,9 @@ class MyApp extends StatelessWidget {
         Routes.home: (_) => const HomePage(),
         Routes.goods: (_) => const GoodsPage(),
         Routes.goodsEdit: (_) => const GoodsEditPage(),
-        Routes.goodsPreview: (_) => const GoodsPreviewPage()
+        Routes.goodsPreview: (_) => const GoodsPreviewPage(),
+        Routes.producerHome: (_) => const ProducerHomePage(),
+        Routes.producerEditor: (_) => const ProducerEditorPage()
       },
       debugShowCheckedModeBanner: false,
     );

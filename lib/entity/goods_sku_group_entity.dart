@@ -9,9 +9,10 @@ class GoodsSkuGroupEntity implements BaseEntity<GoodsSkuGroupEntity> {
 
   @override
   GoodsSkuGroupEntity fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    skus = json.getList('skus', converter: (e) => GoodsSkuEntity().fromJson(e)) ?? [];
-    return this;
+    final entity = GoodsSkuGroupEntity();
+    entity.name = json['name'];
+    entity.skus = json.getList('skus', converter: (e) => GoodsSkuEntity().fromJson(e)) ?? [];
+    return entity;
   }
 
   @override

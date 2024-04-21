@@ -4,7 +4,7 @@ import 'package:storetools/api/api.dart';
 import 'package:storetools/const/apis.dart';
 import 'package:storetools/const/routes.dart';
 import 'package:storetools/entity/goods_entity.dart';
-import 'package:storetools/ui/goods/goods_item_view.dart';
+import 'package:storetools/ui/goods/view/goods_item_view.dart';
 import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/file_pick_utils.dart';
 import 'package:storetools/utils/toast_utils.dart';
@@ -100,7 +100,17 @@ class GoodsState extends BaseState<GoodsPage> {
         itemCount: _goodsEntities?.length ?? 0,
         itemBuilder: (context, index) {
           return ListTile(
-            title: GoodsItemView(goodsEntity: _goodsEntities?[index]),
+            title: Row(
+              children: [
+                GoodsItemView(goodsEntity: _goodsEntities?[index]),
+                TextButton(
+                    onPressed: () {
+
+                    },
+                    child: const Text("新增代发订单")
+                )
+              ],
+            ),
             onTap: () async {
 
             },

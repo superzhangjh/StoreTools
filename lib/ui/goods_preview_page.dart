@@ -8,7 +8,7 @@ import 'package:storetools/base/base_page.dart';
 import 'package:storetools/excel/converter/business/goods_coverter.dart';
 import 'package:storetools/excel/excel_kit.dart';
 import 'package:storetools/ui/goods/goods_detail_page.dart';
-import 'package:storetools/ui/goods/goods_item_view.dart';
+import 'package:storetools/ui/goods/view/goods_item_view.dart';
 import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/route_arguments_utils.dart';
 

@@ -11,4 +11,13 @@ extension MapExt on Map<dynamic, dynamic> {
     }
     return null;
   }
+
+  ///获取object类型
+  T? getObject<T>(dynamic key, { T Function(dynamic t)? converter }) {
+    if (containsKey(key)) {
+      var value = this[key];
+      return converter != null? converter(value): value;
+    }
+    return null;
+  }
 }

@@ -24,13 +24,19 @@ class HomeState extends BaseState<HomeFragment> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.shopEntity.name),
+              Text("店铺：${widget.shopEntity.name}"),
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, Routes.goods);
                   },
                   child: const Text('商品列表')
-              )
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, Routes.producerHome);
+                  },
+                  child: const Text('货源管理')
+              ),
             ]),
         )
     );
