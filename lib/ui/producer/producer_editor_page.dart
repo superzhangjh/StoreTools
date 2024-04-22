@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:storetools/base/base_page.dart';
+import 'package:storetools/const/arguments.dart';
 import 'package:storetools/const/provinces.dart';
 import 'package:storetools/entity/freight_entity.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
@@ -12,9 +15,11 @@ import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/producer/producer_freight_editor_page.dart';
 import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/utils/toast_utils.dart';
+import 'package:storetools/widget/loading_view.dart';
 import 'package:storetools/widget/text_input_widget.dart';
 
 import '../../api/api.dart';
+import '../../utils/route_arguments_utils.dart';
 import '../../widget/icon_text_button.dart';
 
 ///货源编辑
@@ -28,18 +33,27 @@ class ProducerEditorPage extends BasePage {
 }
 
 class ProducerEditorState extends BaseState<ProducerEditorPage> {
-  late ProducerDetailEntity _producer;
-  final _scrollController = ScrollController();
+  ProducerDetailEntity? _producer;
   final _nameController = TextEditingController();
+  final _scrollController = ScrollController();
 
   @override
-  void initState() {
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+  }
+
+  @override
+  void initBuildContext(context) {
     _initProducer();
-    super.initState();
   }
 
   _initProducer() async {
-    _producer = ProducerDetailEntity();
+    setState(() {
+      _producer = getArgument(context, Arguments.producer) ?? ProducerDetailEntity();
+      _nameController.text = _producer!.name ?? "";
+      log("接收:${jsonEncode(_producer)}");
+    });
   }
 
   @override
@@ -54,7 +68,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
           )
         ]
       ),
-      body: CustomScrollView(
+      body: _producer == null? const LoadingView(): CustomScrollView(
         controller: _scrollController,
         slivers: [
           SliverToBoxAdapter(
@@ -62,7 +76,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              ..._producer.categories.map((e) => _buildCategory(e))
+              ..._producer!.categories.map((e) => _buildCategory(e))
             ]),
           ),
           SliverToBoxAdapter(
@@ -85,15 +99,15 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              ..._producer.freights?.map((e) => Offstage(
-                offstage: !_producer.useFreight,
+              ..._producer!.freights?.map((e) => Offstage(
+                offstage: !_producer!.useFreight,
                 child: _buildFreight(e),
               )) ?? []
             ]),
           ),
           SliverToBoxAdapter(
             child: Offstage(
-              offstage: !_producer.useFreight,
+              offstage: !_producer!.useFreight,
               child: TextButton(
                 onPressed: _createFreight,
                 child: const Text('新增运费'),
@@ -132,9 +146,9 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
       children: [
         Radio(
             value: value,
-            groupValue: _producer.useFreight,
+            groupValue: _producer!.useFreight,
             onChanged: (newValue) => setState(() {
-              _producer.useFreight = value;
+              _producer!.useFreight = value;
             })
         ),
         Text(title)
@@ -148,7 +162,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
 
   ///新建分类
   FutureOr<bool> _createCategory(String name) {
-    var found = _producer.categories.find((e) => e.name == name);
+    var found = _producer!.categories.find((e) => e.name == name);
     if (found != null) {
       showToast('该分类已存在');
       return false;
@@ -156,7 +170,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     var category = ProducerCategoryEntity();
     category.name = name;
     setState(() {
-      _producer.categories.add(category);
+      _producer!.categories.add(category);
     });
     return true;
   }
@@ -173,8 +187,8 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     category.specs ??= [];
     category.specs!.add(spec);
     setState(() {
-      var categoryIndex = _producer.categories.findIndex((element) => element.name == category.name);
-      _producer.categories.setSafe(categoryIndex, category);
+      var categoryIndex = _producer!.categories.findIndex((element) => element.name == category.name);
+      _producer!.categories.setSafe(categoryIndex, category);
     });
     return true;
   }
@@ -184,7 +198,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     const provinces = Province.values;
     final enableProvinces = <ProvinceEntity>[];
     for (var province in provinces) {
-      var useFreight = _producer.freights?.find((e1) {
+      var useFreight = _producer!.freights?.find((e1) {
         return e1.provinces?.find((e2) => e2.name == province.cnName) != null;
       });
       //添加未使用的省份
@@ -198,8 +212,8 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     var freight = await showFreightEditor(context, enableProvinces);
     if (freight != null) {
       setState(() {
-        _producer.freights ??= [];
-        _producer.freights?.add(freight);
+        _producer!.freights ??= [];
+        _producer!.freights?.add(freight);
       });
     }
   }
@@ -207,12 +221,12 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   _save() async {
     var name = _nameController.text.trim();
     if (name.isEmpty) name = '货源${DateTime.now().millisecondsSinceEpoch}';
-    if (_producer.categories.isEmpty || _producer.categories.find((e) => e.specs.isNullOrEmpty()) != null) {
+    if (_producer!.categories.isEmpty || _producer!.categories.find((e) => e.specs.isNullOrEmpty()) != null) {
       showToast('分类数据或者分类规格未填写，请检查后重试');
       return;
     }
-    _producer.name = name;
-    var result = await Api.createOrUpdate(_producer);
+    _producer!.name = name;
+    var result = await Api.createOrUpdate(_producer!);
     if (result.isSuccess()) {
       showToast('保存成功');
       Navigator.pop(context, result.data);

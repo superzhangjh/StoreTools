@@ -39,7 +39,7 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   Map<String, dynamic> toJson() => {
     'objectId': objectId,
     'name': name,
-    'categories': categories,
+    'categories': categories.map((e) => e.toJson()).toList(),
     'skus': skus,
     'useFreight': useFreight,
     'freights': freights

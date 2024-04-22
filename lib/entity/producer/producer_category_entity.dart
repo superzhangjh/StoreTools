@@ -21,6 +21,6 @@ class ProducerCategoryEntity implements BaseEntity<ProducerCategoryEntity> {
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
-    'specs': specs
+    'specs': specs?.map((e) => e.toJson()).toList()
   };
 }

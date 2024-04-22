@@ -4,9 +4,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:storetools/api/api.dart';
 import 'package:storetools/base/base_page.dart';
-import 'package:storetools/const/apis.dart';
+import 'package:storetools/const/arguments.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
-import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
 import '../../const/routes.dart';
@@ -68,7 +67,12 @@ class ProducerHomeState extends State<ProducerHomePage> {
   }
 
   Widget _buildProducer(ProducerDetailEntity producer) {
-    return Text(producer.name);
+    return TextButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.producerEditor, arguments: { Arguments.producer: producer });
+        },
+        child: Text(producer.name)
+    );
   }
 
   _requestProducers() async {

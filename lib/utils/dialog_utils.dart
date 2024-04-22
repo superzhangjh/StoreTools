@@ -37,5 +37,10 @@ Future<String?> showInputDialog<T>(
           ],
         );
       }
-  );
+  ).then((value) {
+    try {
+      controller.dispose();
+    } on Exception catch(e) {}
+    return Future.value(value);
+  });
 }
