@@ -14,9 +14,11 @@ class ApiUtils {
       result = <T>[];
       for (var lcObject in list!) {
         var json = t.toJson();
-        log('转换调试：${jsonEncode(json)}');
         fillLcObjectToMap(lcObject, json);
-        result.add(t.fromJson(json));
+        log('调试fillLcObjectToMap后：${jsonEncode(json)}');
+        final entity = t.fromJson(json);
+        result.add(entity);
+        log('调试fromJson后：${jsonEncode(entity)}');
       }
     }
     return result;

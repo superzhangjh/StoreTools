@@ -38,12 +38,6 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   final _scrollController = ScrollController();
 
   @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-  }
-
-  @override
   void initBuildContext(context) {
     _initProducer();
   }
@@ -196,20 +190,17 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   ///新建运费
   _createFreight() async {
     const provinces = Province.values;
-    final enableProvinces = <ProvinceEntity>[];
+    final enableProvinceCodes = <String>[];
     for (var province in provinces) {
       var useFreight = _producer!.freights?.find((e1) {
-        return e1.provinces?.find((e2) => e2.name == province.cnName) != null;
+        return e1.provinceCodes?.find((e2) => e2 == province.cnName) != null;
       });
       //添加未使用的省份
       if (useFreight == null) {
-        var entity = ProvinceEntity();
-        entity.name = province.cnName;
-        entity.code = province.name;
-        enableProvinces.add(entity);
+        enableProvinceCodes.add(province.name);
       }
     }
-    var freight = await showFreightEditor(context, enableProvinces);
+    var freight = await showFreightEditor(context, enableProvinceCodes);
     if (freight != null) {
       setState(() {
         _producer!.freights ??= [];

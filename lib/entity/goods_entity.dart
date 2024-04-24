@@ -30,7 +30,7 @@ class GoodsEntity implements ApiEntity<GoodsEntity> {
     'shopId': shopId,
     'name': name,
     'coverUrl': coverUrl,
-    'skuGroups': skuGroups
+    'skuGroups': skuGroups.map((e) => e.toJson()).toList()
   };
 
   @override

@@ -16,8 +16,8 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   String name = '';
   ///规格信息
   List<ProducerCategoryEntity> categories = [];
-  ///sku：把每个分类里的单个规格组合起来后成为sku
-  List<ProducerSkuEntity> skus = [];
+  // ///sku：把每个分类里的单个规格组合起来后成为sku
+  // List<ProducerSkuEntity> skus = [];
   ///是否使用运费
   bool useFreight = false;
   ///阶梯运费
@@ -29,7 +29,7 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
     entity.objectId = json['objectId'];
     entity.name = json['name'];
     entity.categories = json.getList('categories', converter: (e) => ProducerCategoryEntity().fromJson(e)) ?? [];
-    entity.skus = json.getList('skus', converter: (e) => ProducerSkuEntity().fromJson(e)) ?? [];
+    // entity.skus = json.getList('skus', converter: (e) => ProducerSkuEntity().fromJson(e)) ?? [];
     entity.useFreight = json['useFreight'];
     entity.freights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e));
     return entity;
@@ -40,8 +40,8 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
     'objectId': objectId,
     'name': name,
     'categories': categories.map((e) => e.toJson()).toList(),
-    'skus': skus,
+    // 'skus': skus,
     'useFreight': useFreight,
-    'freights': freights
+    'freights': freights?.map((e) => e.toJson()).toList()
   };
 }

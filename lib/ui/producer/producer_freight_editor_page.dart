@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/entity/freight_entity.dart';
-import 'package:storetools/entity/province_entity.dart';
+import 'package:storetools/utils/province_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
 
 Future<FreightEntity?> showFreightEditor(
     BuildContext context,
-    List<ProvinceEntity> enableProvinces,
+    List<String> enableProvinceCodes,
     { FreightEntity? freightEntity }
 ) => showModalBottomSheet<FreightEntity>(
     context: context,
@@ -14,15 +14,15 @@ Future<FreightEntity?> showFreightEditor(
     backgroundColor: Colors.transparent,
     useSafeArea: true,
     builder: (context) {
-      return ProducerFreightEditorPage(freight: freightEntity ?? FreightEntity(), enableProvinces: enableProvinces);
+      return ProducerFreightEditorPage(freight: freightEntity ?? FreightEntity(), enableProvinceCodes: enableProvinceCodes);
     }
 );
 
 class ProducerFreightEditorPage extends BasePage {
   final FreightEntity freight;
-  final List<ProvinceEntity> enableProvinces;
+  final List<String> enableProvinceCodes;
 
-  const ProducerFreightEditorPage({super.key, required this.freight, required this.enableProvinces});
+  const ProducerFreightEditorPage({super.key, required this.freight, required this.enableProvinceCodes});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,11 +42,7 @@ class ProducerFreightEditorState extends BaseState<ProducerFreightEditorPage> {
   }
 
   _initProvinceWrappers() {
-    for (var value in widget.enableProvinces) {
-      provinceWrappers.add(
-        ProvinceWrapper(selected: false, provinceEntity: value)
-      );
-    }
+    provinceWrappers = widget.enableProvinceCodes.map((e) => ProvinceWrapper(selected: false, provinceCode: e)).toList();
   }
 
   @override
@@ -116,7 +112,7 @@ class ProducerFreightEditorState extends BaseState<ProducerFreightEditorPage> {
             color: provinceWrapper.selected? Colors.white: Colors.black54,
           )
         ),
-        child: Text(provinceWrapper.provinceEntity.name),
+        child: Text(ProvinceUtils.getInstance().getNameByCode(provinceWrapper.provinceCode) ?? ""),
       ),
     );
   }
@@ -127,14 +123,14 @@ class ProducerFreightEditorState extends BaseState<ProducerFreightEditorPage> {
     var freight = FreightEntity();
     freight.name = name;
     freight.price = double.parse(_priceInputController.text.trim());
-    freight.provinces = provinceWrappers.map((e) => e.provinceEntity).toList();
+    freight.provinceCodes = provinceWrappers.map((e) => e.provinceCode).toList();
     Navigator.pop(context, freight);
   }
 }
 
 class ProvinceWrapper {
   bool selected;
-  ProvinceEntity provinceEntity;
+  String provinceCode;
 
-  ProvinceWrapper({ required this.selected, required this.provinceEntity });
+  ProvinceWrapper({ required this.selected, required this.provinceCode });
 }

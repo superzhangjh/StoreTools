@@ -18,6 +18,6 @@ class GoodsSkuGroupEntity implements BaseEntity<GoodsSkuGroupEntity> {
   @override
   Map<String, dynamic> toJson() => {
     'name': name,
-    'skus': skus
+    'skus': skus.map((e) => e.toJson()).toList()
   };
 }

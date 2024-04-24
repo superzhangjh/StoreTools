@@ -7,14 +7,14 @@ import 'package:storetools/ext/map_ext.dart';
 class FreightEntity implements BaseEntity<FreightEntity> {
   String name = '';
   double price = 0;
-  List<ProvinceEntity>? provinces;
+  List<String>? provinceCodes;
 
   @override
   FreightEntity fromJson(Map<String, dynamic> json) {
     final entity = FreightEntity();
     entity.name = json['name'];
     entity.price = json['price'];
-    entity.provinces = json.getList('provinces', converter: (e) => ProvinceEntity().fromJson(e));
+    entity.provinceCodes = json.getList('provinceCodes');
     return entity;
   }
 
@@ -22,6 +22,6 @@ class FreightEntity implements BaseEntity<FreightEntity> {
   Map<String, dynamic> toJson() => {
     'name': name,
     'price': price,
-    'provinces': provinces
+    'provinceCodes': provinceCodes
   };
 }
