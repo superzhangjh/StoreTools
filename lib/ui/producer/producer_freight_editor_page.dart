@@ -27,22 +27,29 @@ Future<List<FreightEntity>?> showFreightEditor(
     }
 );
 
-class ProducerFreightEditorPage extends StatelessWidget {
+class ProducerFreightEditorPage extends BasePage {
   final ProducerDetailEntity producer;
   final int? selectedIndex;
-  final _nameInputController = TextEditingController();
-  final _priceInputController = TextEditingController();
 
-  late final _controller = Get.put(ProducerFreightEditorController(producer: producer, selectedIndex: selectedIndex));
+  const ProducerFreightEditorPage({super.key, required this.producer, required this.selectedIndex});
 
-  ProducerFreightEditorPage({super.key, required this.producer, required this.selectedIndex});
+  @override
+  State<StatefulWidget> createState() => ProducerFreightEditorState();
+}
+
+class ProducerFreightEditorState extends BaseState<ProducerFreightEditorPage> {
+
+  late final _controller = Get.put(ProducerFreightEditorController(
+      producer: widget.producer,
+      selectedIndex: widget.selectedIndex
+  ));
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: DraggableScrollableSheet(
-        initialChildSize: 0.7,
+        initialChildSize: 0.85,
         maxChildSize: 1,
         expand: false,
         builder: (context, controller) {
@@ -66,13 +73,13 @@ class ProducerFreightEditorPage extends StatelessWidget {
                 ),
                 SliverToBoxAdapter(
                   child: TextInputWidget(
-                      controller: _nameInputController,
+                      controller: _controller.nameInputController,
                       label: '名称(选填)'
                   ),
                 ),
                 SliverToBoxAdapter(
                   child: TextInputWidget(
-                      controller: _priceInputController,
+                      controller: _controller.priceInputController,
                       keyboardType: TextInputType.number,
                       label: '价格'
                   ),
@@ -126,6 +133,12 @@ class ProducerFreightEditorPage extends StatelessWidget {
         child: Text(ProvinceUtils.getInstance().getNameByCode(provinceWrapper.provinceCode) ?? ""),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ProducerFreightEditorController>();
+    super.dispose();
   }
 }
 
