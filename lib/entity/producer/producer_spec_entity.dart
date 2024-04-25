@@ -6,12 +6,9 @@ class ProducerSpecEntity implements BaseEntity<ProducerSpecEntity> {
   String name = '';
 
   @override
-  ProducerSpecEntity fromJson(Map<String, dynamic> json) {
-    final entity = ProducerSpecEntity();
-    entity.id = json['id'];
-    entity.name = json['name'];
-    return entity;
-  }
+  ProducerSpecEntity fromJson(Map<String, dynamic> json) => ProducerSpecEntity()
+    ..id = json['id']
+    ..name = json['name'];
 
   @override
   Map<String, dynamic> toJson() => {

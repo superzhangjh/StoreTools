@@ -81,23 +81,25 @@ class HomeState extends BaseState<HomePage> {
         icon: Icon(FontAwesomeIcons.user),
         label: '我的'
     ));
-    return Scaffold(
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          children: fragments,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              _currentIndex = index;
-              _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
-            },
-            items: barItems
+    return SafeArea(
+        child: Scaffold(
+            body: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              children: fragments,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  _currentIndex = index;
+                  _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                },
+                items: barItems
+            )
         )
     );
   }

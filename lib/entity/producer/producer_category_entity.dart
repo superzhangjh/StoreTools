@@ -9,13 +9,10 @@ class ProducerCategoryEntity implements BaseEntity<ProducerCategoryEntity> {
   List<ProducerSpecEntity>? specs;
 
   @override
-  ProducerCategoryEntity fromJson(Map<String, dynamic> json) {
-    final entity = ProducerCategoryEntity();
-    entity.id = json['id'];
-    entity.name = json['name'];
-    entity.specs = json.getList('specs', converter: (e) => ProducerSpecEntity().fromJson(e));
-    return entity;
-  }
+  ProducerCategoryEntity fromJson(Map<String, dynamic> json) => ProducerCategoryEntity()
+    ..id = json['id']
+    ..name = json['name']
+    ..specs = json.getList('specs', converter: (e) => ProducerSpecEntity().fromJson(e));
 
   @override
   Map<String, dynamic> toJson() => {

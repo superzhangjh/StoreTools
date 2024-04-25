@@ -34,16 +34,13 @@ class GoodsEntity implements ApiEntity<GoodsEntity> {
   };
 
   @override
-  GoodsEntity fromJson(Map<String, dynamic> json) {
-    final entity = GoodsEntity();
-    entity.objectId = json['objectId'];
-    entity.thirdPartyId = json['thirdPartyId'];
-    entity.shopId = json['shopId'];
-    entity.name = json['name'];
-    entity.coverUrl = json['coverUrl'];
-    entity.skuGroups = json.getList('skuGroups', converter: (e) => GoodsSkuGroupEntity().fromJson(e)) ?? [];
-    return entity;
-  }
+  GoodsEntity fromJson(Map<String, dynamic> json) => GoodsEntity()
+    ..objectId = json['objectId']
+    ..thirdPartyId = json['thirdPartyId']
+    ..shopId = json['shopId']
+    ..name = json['name']
+    ..coverUrl = json['coverUrl']
+    ..skuGroups = json.getList('skuGroups', converter: (e) => GoodsSkuGroupEntity().fromJson(e)) ?? [];
 
   ///将行数据转为商品数据，合并多个sku为一个商品
   ///[shopId]店铺id

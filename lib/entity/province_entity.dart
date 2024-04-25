@@ -5,12 +5,9 @@ class ProvinceEntity implements BaseEntity<ProvinceEntity> {
   String code = '';
 
   @override
-  ProvinceEntity fromJson(Map<String, dynamic> json) {
-    final entity = ProvinceEntity();
-    entity.name = json['name'];
-    entity.code = json['code'];
-    return entity;
-  }
+  ProvinceEntity fromJson(Map<String, dynamic> json) => ProvinceEntity()
+    ..name = json['name']
+    ..code = json['code'];
 
   @override
   Map<String, dynamic> toJson() => {

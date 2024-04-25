@@ -39,3 +39,43 @@ Future<String?> showInputDialog<T>(
       }
   );
 }
+
+showConfirmDialog(
+    BuildContext context,
+    String content, {
+      String title = '提示',
+      String negativeText = '取消',
+      String positiveText = '确定',
+      FutureOr<bool> Function()? onNegativeClick,
+      FutureOr<bool> Function()? onPositiveClick,
+    }
+) {
+  return showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            TextButton(
+                onPressed: () async {
+                  var pop = true;
+                  if (onNegativeClick != null) pop = await onNegativeClick();
+                  if (pop) Navigator.pop(context);
+                },
+                child: Text(negativeText)
+            ),
+            TextButton(
+                onPressed: () async {
+                  var pop = true;
+                  if (onPositiveClick != null) pop = await onPositiveClick();
+                  if (pop) Navigator.pop(context);
+                },
+                child: Text(positiveText)
+            )
+          ],
+        );
+      }
+  );
+}

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/const/arguments.dart';
 import 'package:storetools/const/provinces.dart';
-import 'package:storetools/entity/freight_entity.dart';
+import 'package:storetools/entity/freight/freight_entity.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
 import 'package:storetools/entity/producer/producer_spec_entity.dart';
@@ -103,7 +103,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
             child: Offstage(
               offstage: !_producer!.useFreight,
               child: TextButton(
-                onPressed: _createFreight,
+                onPressed: () => _showFreightEditor(),
                 child: const Text('新增运费'),
               ),
             ),
@@ -151,7 +151,10 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   }
 
   Widget _buildFreight(FreightEntity freightEntity) {
-    return Text("${freightEntity.name}  运费:${freightEntity.price}");
+    return TextButton(
+      onPressed: () => _showFreightEditor(freightEntity: freightEntity),
+      child: Text("${freightEntity.name}  运费:${freightEntity.price}"),
+    );
   }
 
   ///新建分类
@@ -187,24 +190,17 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     return true;
   }
 
-  ///新建运费
-  _createFreight() async {
-    const provinces = Province.values;
-    final enableProvinceCodes = <String>[];
-    for (var province in provinces) {
-      var useFreight = _producer!.freights?.find((e1) {
-        return e1.provinceCodes?.find((e2) => e2 == province.cnName) != null;
-      });
-      //添加未使用的省份
-      if (useFreight == null) {
-        enableProvinceCodes.add(province.name);
-      }
-    }
-    var freight = await showFreightEditor(context, enableProvinceCodes);
-    if (freight != null) {
+  ///打开运费编辑
+  ///[freightEntity]运费信息，不传则创建新的
+  _showFreightEditor({ FreightEntity? freightEntity }) async {
+    final newFreights = await showFreightEditor(
+        context,
+        _producer!,
+        selectedIndex: freightEntity == null? null: _producer?.freights?.findIndex((element) => element == freightEntity)
+    );
+    if (newFreights != null) {
       setState(() {
-        _producer!.freights ??= [];
-        _producer!.freights?.add(freight);
+        _producer?.freights = newFreights;
       });
     }
   }
