@@ -12,7 +12,7 @@ import 'package:storetools/entity/producer/producer_detail_entity.dart';
 import 'package:storetools/entity/producer/producer_spec_entity.dart';
 import 'package:storetools/entity/province_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
-import 'package:storetools/ui/producer/producer_freight_editor_page.dart';
+import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_page.dart';
 import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/utils/toast_utils.dart';
 import 'package:storetools/widget/loading_view.dart';

@@ -11,14 +11,14 @@ class FreightEntity implements BaseEntity<FreightEntity> {
   //特定规格的价格
   List<FreightPriceEntity>? categoryPrices;
   //指定的省份编码
-  List<String>? provinceCodes = [];
+  List<String> provinceCodes = [];
 
   @override
   FreightEntity fromJson(Map<String, dynamic> json) => FreightEntity()
     ..name = json['name']
     ..price = json['price']
     ..categoryPrices = json.getList('categoryPrices', converter: (e) => FreightPriceEntity().fromJson(e))?.toList()
-    ..provinceCodes = json.getList('provinceCodes');
+    ..provinceCodes = json.getList('provinceCodes') ?? [];
 
   @override
   Map<String, dynamic> toJson() => {

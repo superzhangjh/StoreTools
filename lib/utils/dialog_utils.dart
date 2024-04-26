@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../widget/text_input_widget.dart';
 
@@ -41,7 +42,6 @@ Future<String?> showInputDialog<T>(
 }
 
 showConfirmDialog(
-    BuildContext context,
     String content, {
       String title = '提示',
       String negativeText = '取消',
@@ -50,32 +50,26 @@ showConfirmDialog(
       FutureOr<bool> Function()? onPositiveClick,
     }
 ) {
-  return showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
-          actions: [
-            TextButton(
-                onPressed: () async {
-                  var pop = true;
-                  if (onNegativeClick != null) pop = await onNegativeClick();
-                  if (pop) Navigator.pop(context);
-                },
-                child: Text(negativeText)
-            ),
-            TextButton(
-                onPressed: () async {
-                  var pop = true;
-                  if (onPositiveClick != null) pop = await onPositiveClick();
-                  if (pop) Navigator.pop(context);
-                },
-                child: Text(positiveText)
-            )
-          ],
-        );
-      }
+  onPressed(FutureOr<bool> Function()? onClick) async {
+    var pop = true;
+    if (onClick != null) pop = await onClick();
+    if (pop) Get.back();
+  }
+  return Get.dialog(
+      AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          TextButton(
+              onPressed: () => onPressed(onNegativeClick),
+              child: Text(negativeText)
+          ),
+          TextButton(
+              onPressed: () => onPressed(onPositiveClick),
+              child: Text(positiveText)
+          )
+        ],
+      )
   );
 }

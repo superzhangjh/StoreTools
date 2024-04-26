@@ -8,8 +8,8 @@ extension ListExt<T> on List<T>? {
   }
 
   ///下标安全地设置值
-  bool setSafe(int index, T element) {
-    if (this != null && index >= 0 && index < this!.length) {
+  bool setSafe(int? index, T element) {
+    if (this != null && index != null && index >= 0 && index < this!.length) {
       this![index] = element;
       return true;
     }
