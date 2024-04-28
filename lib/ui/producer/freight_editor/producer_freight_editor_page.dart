@@ -1,32 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/base/bottom_sheet_page.dart';
-import 'package:storetools/const/provinces.dart';
-import 'package:storetools/entity/freight/freight_entity.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
-import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_controller.dart';
-import 'package:storetools/utils/dialog_utils.dart';
+import 'package:storetools/ui/producer/freight_editor/producer_freight_spec_page.dart';
 import 'package:storetools/utils/province_utils.dart';
-import 'package:storetools/utils/toast_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
 
-Future<List<FreightEntity>?> showFreightEditor(
-    BuildContext context,
-    ProducerDetailEntity producer,
-    { int? selectedIndex }
-) => showModalBottomSheet<List<FreightEntity>>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    useSafeArea: true,
-    builder: (context) {
-      return ProducerFreightEditorPage(producer: producer, selectedIndex: selectedIndex);
-    }
-);
+import '../../../entity/freight/sku_freight_entity.dart';
 
 class ProducerFreightEditorPage extends BottomSheetPage {
   final ProducerDetailEntity producer;
@@ -73,15 +55,15 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
             label: '价格'
         ),
       ),
-      // SliverList(
-      //     delegate: SliverChildListDelegate(
-      //         _selectFreight.categoryPrices?.map((e) => null).toList()
-      //     )
-      // ),
+      Obx(() => SliverList(
+          delegate: SliverChildListDelegate(
+              _controller.skuFreights.map((e) => _buildSkuFreight(e)).toList()
+          )
+      )),
       SliverToBoxAdapter(
         child: TextButton(
           onPressed: () => {
-
+            bottomSheetPage(const ProducerFreightSpecPage())
           },
           child: const Text('指定规格运费'),
         ),
@@ -93,6 +75,13 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
       )
     ],
   );
+
+  Widget _buildSkuFreight(SkuFreightEntity skuFreightEntity) {
+    return ListTile(
+      title: Text("特殊规格价格：${skuFreightEntity.price}"),
+      subtitle: Text(skuFreightEntity.skus.map((e) => e.categoryName + e.specName).join("\n")),
+    );
+  }
 
   Widget _buildProvince(ProvinceWrapper provinceWrapper) {
     return Padding(

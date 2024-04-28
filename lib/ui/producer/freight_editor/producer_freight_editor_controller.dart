@@ -1,24 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:storetools/base/base_controller.dart';
 import 'package:storetools/entity/freight/freight_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/utils/province_utils.dart';
 
 import '../../../const/provinces.dart';
+import '../../../entity/freight/sku_freight_entity.dart';
 import '../../../entity/producer/producer_detail_entity.dart';
 import '../../../utils/dialog_utils.dart';
-import '../../../utils/toast_utils.dart';
 
-class ProducerFreightEditorController extends GetxController {
+class ProducerFreightEditorController extends BaseController {
   final ProducerDetailEntity producer;
   final int? selectedIndex;
 
-  final provinceWrappers = <ProvinceWrapper>[].obs;
-  final currentFreight = Rx<FreightEntity?>(null);
-
   late final TextEditingController nameInputController;
   late final TextEditingController priceInputController;
+
+  //省份信息
+  final provinceWrappers = <ProvinceWrapper>[].obs;
+  //特定阶梯运费
+  final skuFreights = <SkuFreightEntity>[].obs;
 
   ProducerFreightEditorController({ required this.producer, required this.selectedIndex });
 
@@ -42,7 +45,7 @@ class ProducerFreightEditorController extends GetxController {
     provinceWrappers.value = Province.values.mapIndex((index, value) {
       final code = value.name;
       bool selected = selectedFreight?.provinceCodes.contains(code) ?? false;
-      bool enable = selected || producer.freights?.findWithIndex((element, i) => i != selectedIndex && element.provinceCodes?.contains(code) == true) == null;
+      bool enable = selected || producer.freights?.findWithIndex((element, i) => i != selectedIndex && element.provinceCodes.contains(code) == true) == null;
       return ProvinceWrapper(provinceCode: code, selected: selected, enable: enable);
     }) ?? [];
   }
@@ -81,6 +84,11 @@ class ProducerFreightEditorController extends GetxController {
     }
   }
 
+  ///添加特定运费
+  addSkuFreight(SkuFreightEntity skuFreightEntity) {
+    skuFreights.add(skuFreightEntity);
+  }
+
   ///保存改动的运费
   save() {
     var name = nameInputController.text.trim();
@@ -90,6 +98,7 @@ class ProducerFreightEditorController extends GetxController {
     final selectedFreight = getSelectedFreight() ?? FreightEntity()
       ..name = name
       ..price = double.parse(priceInputController.text.trim())
+      ..skuFreights = skuFreights
       ..provinceCodes = provinceWrappers.filter((e) => e.selected)?.map((e) => e.provinceCode).toList() ?? [];
 
     //更新货源的所有阶梯运费

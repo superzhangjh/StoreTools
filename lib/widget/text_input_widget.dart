@@ -14,6 +14,19 @@ class TextInputWidget extends StatefulWidget {
     this.keyboardType
   });
 
+  factory TextInputWidget.number({
+    required TextEditingController controller,
+    required String label,
+    bool? obscureText
+}) {
+    return TextInputWidget(
+        controller: controller,
+        label: label,
+        obscureText: obscureText,
+        keyboardType: TextInputType.number
+    );
+  }
+
   @override
   State<StatefulWidget> createState() {
     return TextInputState();

@@ -40,7 +40,7 @@ class GoodsState extends BaseState<GoodsPreviewPage> {
   @override
   void initBuildContext(BuildContext context) {
     super.initBuildContext(context);
-    decodeExcel(getArgument(context, 'filePath'));
+    decodeExcel(getArgument('filePath'));
   }
   
   void decodeExcel(String? path) async {
