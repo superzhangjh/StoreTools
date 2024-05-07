@@ -1,5 +1,6 @@
 import 'package:storetools/api/entity/api_entity.dart';
 import 'package:storetools/const/apis.dart';
+import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_sku_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
@@ -13,8 +14,8 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   String? objectId;
   ///货源名称
   String name = '';
-  //sku
-  List<ProducerSkuEntity> skus = [];
+  //分类规格
+  List<ProducerCategoryEntity> categories = [];
   ///是否使用运费
   bool useFreight = false;
   ///阶梯运费
@@ -24,7 +25,7 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   ProducerDetailEntity fromJson(Map<String, dynamic> json) => ProducerDetailEntity()
     ..objectId = json['objectId']
     ..name = json['name']
-    ..skus = json.getList('skus', converter: (e) => ProducerSkuEntity().fromJson(e)) ?? []
+    ..categories = json.getList("categories", converter: (e) => ProducerCategoryEntity().fromJson(e)) ?? []
     ..useFreight = json['useFreight']
     ..freights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e));
 
@@ -32,7 +33,7 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   Map<String, dynamic> toJson() => {
     'objectId': objectId,
     'name': name,
-    'skus': skus.map((e) => e.toJson()).toList(),
+    'categories': categories.map((e) => e.toJson()).toList(),
     'useFreight': useFreight,
     'freights': freights?.map((e) => e.toJson()).toList()
   };

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storetools/base/base_page.dart';
@@ -6,8 +8,10 @@ import 'package:storetools/entity/freight/sku_freight_entity.dart';
 import 'package:storetools/entity/producer/producer_sku_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_controller.dart';
+import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
+import '../../../entity/producer/producer_category_entity.dart';
 import '../../../widget/text_input_widget.dart';
 
 class ProducerFreightSpecPage extends BottomSheetPage {
@@ -29,8 +33,31 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
   }
 
   _initData() {
-    //todo:这里应该用所有spec互相组合成为新的sku
-    _skuWrappers = _controller.producer.skus.map((e) => ProductSkuWrapper(isSelect: false, sku: e)).toList();
+    _skuWrappers = [];
+    logDebug("数据源: ${jsonEncode(_controller.producer.categories)}");
+    final skus = generateSkus(_controller.producer.categories);
+    logDebug("匹配结果: ${jsonEncode(skus)}");
+  }
+
+  List<String> generateSkus(List<ProducerCategoryEntity> categories, { List<String>? skus }) {
+    logDebug("开始匹配 skus:${jsonEncode(skus)} categories:${jsonEncode(categories)}");
+    if (categories.isEmpty) return [];
+    List<String> newSkus = [];
+    final category = categories.first;
+    if (skus.isNullOrEmpty()) {
+      newSkus.addAll(category.specs.map((e) => e.name));
+    } else {
+      logDebug("调试 skus:${jsonEncode(skus)} specs:${jsonEncode(category.specs)}");
+      for (var sku in skus!) {
+        for (var spec in category.specs) {
+          newSkus.add("$sku ${spec.name}");
+        }
+      }
+    }
+    if (categories.length > 1) {
+      return generateSkus(categories.sublist(1), skus: newSkus);
+    }
+    return newSkus;
   }
 
   @override
@@ -73,7 +100,7 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
       child: Row(
         children: [
           Icon(wrapper.isSelect? Icons.check_box: Icons.check_box_outline_blank, size: 20),
-          Text(wrapper.sku.categoryName + wrapper.sku.specName)
+          // Text(wrapper.sku.categoryName + wrapper.sku.specName)
         ],
       ),
     ),
@@ -86,8 +113,8 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
       return;
     }
     final skuFreight = SkuFreightEntity()
-      ..price = double.parse(_inputController.text.trim())
-      ..skus = selectedSpecWrappers?.map((e) => e.sku).toList() ?? [];
+      ..price = double.parse(_inputController.text.trim());
+      // ..skus = selectedSpecWrappers?.map((e) => e.sku).toList() ?? [];
     _controller.addSkuFreight(skuFreight);
     Get.back();
   }
@@ -95,7 +122,7 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
 
 class ProductSkuWrapper {
   bool isSelect;
-  ProducerSkuEntity sku;
+  String name;
 
-  ProductSkuWrapper({ required this.isSelect, required this.sku });
+  ProductSkuWrapper({ required this.isSelect, required this.name });
 }

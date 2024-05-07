@@ -46,7 +46,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
             child: TextInputWidget(controller: _controller.nameController, label: '名称'),
           ),
           Obx(() => SliverList(
-            delegate: SliverChildListDelegate(_controller.categories.map((element) => _buildCategory(element)).toList()),
+            delegate: SliverChildListDelegate(_controller.producer.value.categories.map((element) => _buildCategory(element)).toList()),
           )),
           SliverToBoxAdapter(
             child: TextButton(

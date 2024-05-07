@@ -14,6 +14,6 @@ class ProducerCategoryEntity implements BaseEntity<ProducerCategoryEntity> {
   @override
   Map<String, dynamic> toJson() => {
     'name': name,
-    'specs': specs.map((e) => e.toJson())
+    'specs': specs.map((e) => e.toJson()).toList()
   };
 }

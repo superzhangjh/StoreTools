@@ -19,41 +19,25 @@ import '../../utils/toast_utils.dart';
 class ProducerEditorController extends BaseController {
   late Rx<ProducerDetailEntity> producer = Rx(getArgument(Arguments.producer) ?? ProducerDetailEntity());
   late final TextEditingController nameController;
-  late final RxList<ProducerCategoryEntity> categories;
 
   @override
   void onInit() {
     super.onInit();
     nameController = TextEditingController(text: producer.value.name);
-    _initCategories();
-  }
-
-  _initCategories() {
-    final categoryMap = <String, ProducerCategoryEntity>{};
-    for (var sku in producer.value.skus) {
-      var category = categoryMap[sku.categoryName];
-      if (category == null) {
-        category = ProducerCategoryEntity()
-            ..name = sku.categoryName;
-        categoryMap[sku.categoryName] = category;
-      }
-      final spec = ProducerSpecEntity()
-        ..name = sku.specName;
-      category.specs.add(spec);
-    }
-    categories = categoryMap.values.toList().obs;
   }
 
   ///新建分类
   FutureOr<bool> createCategory(String name) {
-    var found = categories.find((e) => e.name == name);
+    var found = producer.value.categories.find((e) => e.name == name);
     if (found != null) {
       showToast('该分类已存在');
       return false;
     }
     var category = ProducerCategoryEntity();
     category.name = name;
-    categories.add(category);
+    producer.update((val) {
+      val?.categories.add(category);
+    });
     return true;
   }
 
@@ -67,8 +51,10 @@ class ProducerEditorController extends BaseController {
     var spec = ProducerSpecEntity();
     spec.name = name;
     category.specs.add(spec);
-    var categoryIndex = categories.findIndex((element) => element.name == category.name);
-    categories.setSafe(categoryIndex, category);
+    var categoryIndex = producer.value.categories.findIndex((element) => element.name == category.name);
+    producer.update((val) {
+      val?.categories?.setSafe(categoryIndex, category);
+    });
     return true;
   }
 
@@ -86,20 +72,11 @@ class ProducerEditorController extends BaseController {
     if (name.isEmpty) name = '货源${DateTime.now().millisecondsSinceEpoch}';
     producer.value.name = name;
 
+    final categories = producer.value.categories;
     if (categories.isEmpty || categories.find((e) => e.specs.isNullOrEmpty()) != null) {
       showToast('分类数据或者分类规格未填写，请检查后重试');
       return;
     }
-    final skus = <ProducerSkuEntity>[];
-    for (var category in categories) {
-      for (var spec in category.specs) {
-        final sku = ProducerSkuEntity()
-          ..categoryName = category.name
-          ..specName = spec.name;
-        skus.add(sku);
-      }
-    }
-    producer.value.skus = skus;
 
     var result = await Api.createOrUpdate(producer.value);
     if (result.isSuccess()) {
