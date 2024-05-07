@@ -5,6 +5,7 @@ import 'package:storetools/entity/producer/producer_sku_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 import '../freight/freight_entity.dart';
+import '../freight/sku_freight_entity.dart';
 
 ///货源详情
 class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
@@ -16,10 +17,14 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   String name = '';
   //分类规格
   List<ProducerCategoryEntity> categories = [];
-  ///是否使用运费
+  ///是否使用运费模板
   bool useFreight = false;
   ///阶梯运费
   List<FreightEntity>? freights;
+  ///统一的运费
+  double unifiedPrice = 0;
+  ///特定规格的价格
+  List<SkuFreightEntity>? skuFreights;
 
   @override
   ProducerDetailEntity fromJson(Map<String, dynamic> json) => ProducerDetailEntity()

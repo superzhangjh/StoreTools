@@ -61,7 +61,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text('运费：'),
-                Expanded(child: _buildFreightRatio('全国包邮', false)),
+                Expanded(child: _buildFreightRatio('统一运费', false)),
                 Expanded(child: _buildFreightRatio('阶梯运费', true))
               ],
             ),

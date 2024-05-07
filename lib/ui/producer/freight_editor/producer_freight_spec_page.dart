@@ -24,7 +24,7 @@ class ProducerFreightSpecPage extends BottomSheetPage {
 class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage> {
   final _controller = Get.find<ProducerFreightEditorController>();
   final _inputController = TextEditingController(text: "0");
-  late List<ProductSkuWrapper> _skuWrappers;
+  late List<ProducerSkuWrapper> _skuWrappers;
 
   @override
   void initState() {
@@ -33,10 +33,9 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
   }
 
   _initData() {
-    _skuWrappers = [];
-    logDebug("数据源: ${jsonEncode(_controller.producer.categories)}");
-    final skus = generateSkus(_controller.producer.categories);
-    logDebug("匹配结果: ${jsonEncode(skus)}");
+    _skuWrappers = ProducerSkuEntity.fromCategories(_controller.producer.categories)
+        .map((e) => ProducerSkuWrapper(isSelect: false, sku: e))
+        .toList();
   }
 
   List<String> generateSkus(List<ProducerCategoryEntity> categories, { List<String>? skus }) {
@@ -86,7 +85,7 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
     );
   }
 
-  Widget _buildSpecWrapper(int index, ProductSkuWrapper wrapper) => GestureDetector(
+  Widget _buildSpecWrapper(int index, ProducerSkuWrapper wrapper) => GestureDetector(
     onTap: () {
       setState(() {
         wrapper.isSelect = !wrapper.isSelect;
@@ -100,7 +99,7 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
       child: Row(
         children: [
           Icon(wrapper.isSelect? Icons.check_box: Icons.check_box_outline_blank, size: 20),
-          // Text(wrapper.sku.categoryName + wrapper.sku.specName)
+          Text(wrapper.sku.name)
         ],
       ),
     ),
@@ -113,16 +112,16 @@ class ProducerFreightSpecState extends BottomSheetState<ProducerFreightSpecPage>
       return;
     }
     final skuFreight = SkuFreightEntity()
-      ..price = double.parse(_inputController.text.trim());
-      // ..skus = selectedSpecWrappers?.map((e) => e.sku).toList() ?? [];
+      ..price = double.parse(_inputController.text.trim())
+      ..skus = selectedSpecWrappers?.map((e) => e.sku).toList() ?? [];
     _controller.addSkuFreight(skuFreight);
     Get.back();
   }
 }
 
-class ProductSkuWrapper {
+class ProducerSkuWrapper {
   bool isSelect;
-  String name;
+  ProducerSkuEntity sku;
 
-  ProductSkuWrapper({ required this.isSelect, required this.name });
+  ProducerSkuWrapper({ required this.isSelect, required this.sku });
 }

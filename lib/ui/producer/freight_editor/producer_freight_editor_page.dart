@@ -79,7 +79,7 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
   Widget _buildSkuFreight(SkuFreightEntity skuFreightEntity) {
     return ListTile(
       title: Text("特殊规格价格：${skuFreightEntity.price}"),
-      subtitle: Text(skuFreightEntity.skus.map((e) => e.categoryName + e.specName).join("\n")),
+      subtitle: Text(skuFreightEntity.skus.map((e) => e.name).join("\n")),
     );
   }
 
