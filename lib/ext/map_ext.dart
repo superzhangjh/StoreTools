@@ -25,4 +25,25 @@ extension MapExt on Map<String, dynamic> {
     }
     return null;
   }
+
+  ///获取double类型
+  double? getDouble(dynamic key) {
+    if (containsKey(key)) {
+      final value = this[key];
+      if (value is double) {
+        return value;
+      } else if (value is String) {
+        return double.parse(value);
+      }
+    }
+    return null;
+  }
+
+  String? getString(dynamic key) {
+    if (containsKey(key)) {
+      final value = this[key];
+      return value?.toString();
+    }
+    return null;
+  }
 }

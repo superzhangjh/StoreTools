@@ -6,6 +6,7 @@ import 'package:storetools/entity/freight/freight_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_page.dart';
 import 'package:storetools/ui/producer/producer_editor_controller.dart';
+import 'package:storetools/ui/producer/producer_spec_page.dart';
 import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
 
@@ -91,13 +92,9 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     return Column(
       children: [
         Text(category.name),
-        ...category.specs.map((e) => _buildSpec(e)),
+        ...?category.specs.mapIndex((index, e) => _buildSpec(category, e, index)),
         IconTextButton(
-            onPressed: () {
-              showInputDialog(context, '新增规格', '名称(选填)', (text) {
-                return _controller.createSpec(category, text);
-              });
-            },
+            onPressed: () => bottomSheetPage(ProducerSpecPage(categoryEntity: category)),
             text: '新增规格',
             icon: Icons.add
         ),
@@ -105,8 +102,11 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
     );
   }
 
-  Widget _buildSpec(ProducerSpecEntity specEntity) {
-    return Text(specEntity.name);
+  Widget _buildSpec(ProducerCategoryEntity category, ProducerSpecEntity specEntity, int index) {
+    return TextButton(
+        onPressed: () => bottomSheetPage(ProducerSpecPage(categoryEntity: category, specIndex: index)), 
+        child: Text(specEntity.name)
+    );
   }
 
   Widget _buildFreightRatio(String title, bool value) => Obx(() => GestureDetector(

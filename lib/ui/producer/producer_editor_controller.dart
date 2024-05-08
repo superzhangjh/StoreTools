@@ -6,8 +6,10 @@ import 'package:get/get.dart';
 import 'package:storetools/base/base_controller.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_sku_entity.dart';
+import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/utils/log_utils.dart';
+import 'package:storetools/utils/short_uuid_utils.dart';
 
 import '../../api/api.dart';
 import '../../const/arguments.dart';
@@ -28,6 +30,10 @@ class ProducerEditorController extends BaseController {
 
   ///新建分类
   FutureOr<bool> createCategory(String name) {
+    if (name.isEmpty) {
+      showToast('名称未填写');
+      return false;
+    }
     var found = producer.value.categories.find((e) => e.name == name);
     if (found != null) {
       showToast('该分类已存在');
@@ -42,18 +48,28 @@ class ProducerEditorController extends BaseController {
   }
 
   ///新建规格
-  FutureOr<bool> createSpec(ProducerCategoryEntity category, String name) {
-    var found = category.specs.find((e) => e.name == name);
+  FutureOr<bool> createOrUpdateSpec(ProducerCategoryEntity category, int? specIndex, String name, double cost, String? tagId) {
+    if (name.isEmpty) {
+      showToast('名称未填写');
+      return false;
+    }
+    var found = category.specs.findWithIndex((e, index) => index != specIndex && e.name == name);
     if (found != null) {
       showToast('该规格已存在');
       return false;
     }
-    var spec = ProducerSpecEntity();
+    final spec = category.specs.getSafeOfNull(specIndex) ?? ProducerSpecEntity();
     spec.name = name;
-    category.specs.add(spec);
+    spec.cost = cost;
+    spec.tagId = tagId;
+    if (specIndex == null) {
+      category.specs.add(spec);
+    } else {
+      category.specs.setSafe(specIndex, spec);
+    }
     var categoryIndex = producer.value.categories.findIndex((element) => element.name == category.name);
     producer.update((val) {
-      val?.categories?.setSafe(categoryIndex, category);
+      val?.categories.setSafe(categoryIndex, category);
     });
     return true;
   }
@@ -63,6 +79,17 @@ class ProducerEditorController extends BaseController {
     logDebug("切换使用运费:$useFreight");
     producer.update((val) {
       val?.useFreight = useFreight;
+    });
+  }
+
+  ///创建标签
+  createTag(String name) {
+    producer.update((val) {
+      final tagEntity = ProducerTagEntity()
+        ..id = ShortUUidUtils.generateShortId()
+        ..name = name;
+      val?.tags ??= [];
+      val?.tags?.add(tagEntity);
     });
   }
 

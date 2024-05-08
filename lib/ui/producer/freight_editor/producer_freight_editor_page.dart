@@ -3,12 +3,10 @@ import 'package:get/get.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/base/bottom_sheet_page.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
+import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_controller.dart';
-import 'package:storetools/ui/producer/freight_editor/producer_freight_spec_page.dart';
 import 'package:storetools/utils/province_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
-
-import '../../../entity/freight/sku_freight_entity.dart';
 
 class ProducerFreightEditorPage extends BottomSheetPage {
   final ProducerDetailEntity producer;
@@ -37,7 +35,7 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
         pinned: true,
         actions: [
           TextButton(
-              onPressed: () => _controller.save(),
+              onPressed: _controller.save,
               child: const Text('保存')
           )
         ],
@@ -56,18 +54,12 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
         ),
       ),
       Obx(() => SliverList(
-          delegate: SliverChildListDelegate(
-              _controller.skuFreights.map((e) => _buildSkuFreight(e)).toList()
-          )
+          delegate: SliverChildListDelegate(_controller.tagFreightWrappers.mapIndex(_buildTagFreight) ?? [])
       )),
-      SliverToBoxAdapter(
-        child: TextButton(
-          onPressed: () => {
-            bottomSheetPage(const ProducerFreightSpecPage())
-          },
-          child: const Text('指定规格运费'),
-        ),
-      ),
+      // Obx(() => SliverFixedExtentList(
+      //     delegate: SliverChildListDelegate(_controller.tagFreightWrappers.mapIndex(_buildTagFreight) ?? []),
+      //     itemExtent: 50
+      // )),
       SliverToBoxAdapter(
         child: Obx(() => Wrap(
           children: _controller.provinceWrappers.map((e) => _buildProvince(e)).toList(),
@@ -76,10 +68,20 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
     ],
   );
 
-  Widget _buildSkuFreight(SkuFreightEntity skuFreightEntity) {
-    return ListTile(
-      title: Text("特殊规格价格：${skuFreightEntity.price}"),
-      subtitle: Text(skuFreightEntity.skus.map((e) => e.name).join("\n")),
+  Widget _buildTagFreight(int index, TagFreightWrapper tagFreightWrapper) {
+    return Row(
+        children: [
+          Expanded(
+              child: TextInputWidget.number(
+                  controller: _controller.tagFreightControllerMap[tagFreightWrapper.tagFreight.tag?.id ?? ''] ?? TextEditingController(),
+                  label: '${tagFreightWrapper.tagFreight.tag?.name}价格（选填）'
+              )
+          ),
+          Checkbox(
+              value: tagFreightWrapper.isChecked,
+              onChanged: (isChecked) => _controller.toggleTagFreightCheck(index, isChecked)
+          )
+        ]
     );
   }
 

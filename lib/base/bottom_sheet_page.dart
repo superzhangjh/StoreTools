@@ -24,19 +24,21 @@ abstract class BottomSheetState<T extends BasePage> extends BaseState<T> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.75,
-        maxChildSize: 1,
-        expand: false,
-        builder: (context, controller) {
-          return Container(
-            color: Colors.white,
-            child: buildScroll(context, controller)
-          );
-        },
-      ),
+    return SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.75,
+            maxChildSize: 1,
+            expand: false,
+            builder: (context, controller) {
+              return Container(
+                  color: Colors.white,
+                  child: buildScroll(context, controller)
+              );
+            },
+          ),
+        )
     );
   }
 }
