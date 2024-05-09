@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storetools/base/base_controller.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
-import 'package:storetools/entity/producer/producer_sku_entity.dart';
 import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/utils/log_utils.dart';
@@ -75,10 +74,10 @@ class ProducerEditorController extends BaseController {
   }
 
   ///切换使用运费
-  toggleUseFreight(bool useFreight) {
-    logDebug("切换使用运费:$useFreight");
+  toggleUseStepFreight(bool useStepFreight) {
+    logDebug("切换使用运费:$useStepFreight");
     producer.update((val) {
-      val?.useFreight = useFreight;
+      val?.useStepFreight = useStepFreight;
     });
   }
 

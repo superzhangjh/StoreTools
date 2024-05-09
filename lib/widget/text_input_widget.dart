@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextInputWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -50,6 +51,7 @@ class TextInputState extends State<TextInputWidget> {
         obscureText: widget.obscureText ?? false,
         controller: widget.controller,
         keyboardType: widget.keyboardType,
+        // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(
           labelText: widget.label,
           border: const OutlineInputBorder()

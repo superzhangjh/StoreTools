@@ -1,3 +1,5 @@
+import 'package:storetools/utils/log_utils.dart';
+
 extension MapExt on Map<String, dynamic> {
   ///获取数据类型
   List<T>? getList<T>(dynamic key, { T Function(dynamic t)? converter }) {
@@ -21,7 +23,7 @@ extension MapExt on Map<String, dynamic> {
   T? getObject<T>(dynamic key, { T Function(dynamic t)? converter }) {
     if (containsKey(key)) {
       var value = this[key];
-      return converter != null? converter(value): value;
+      return converter != null && value != null? converter(value): value;
     }
     return null;
   }
@@ -33,7 +35,11 @@ extension MapExt on Map<String, dynamic> {
       if (value is double) {
         return value;
       } else if (value is String) {
-        return double.parse(value);
+        try {
+          return double.parse(value);
+        } catch (e) {
+          logDebug(e.toString());
+        }
       }
     }
     return null;
@@ -43,6 +49,23 @@ extension MapExt on Map<String, dynamic> {
     if (containsKey(key)) {
       final value = this[key];
       return value?.toString();
+    }
+    return null;
+  }
+
+  bool? getBool(dynamic key) {
+    if (containsKey(key)) {
+      final value = this[key];
+      if (value is bool) {
+        return value;
+      }
+      if (value is String) {
+        try {
+          return bool.parse(value);
+        } catch (e) {
+          logDebug(e.toString());
+        }
+      }
     }
     return null;
   }

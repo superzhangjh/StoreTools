@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/base/bottom_sheet_page.dart';
+import 'package:storetools/entity/freight/tag_freight_entity.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_controller.dart';
@@ -10,9 +11,10 @@ import 'package:storetools/widget/text_input_widget.dart';
 
 class ProducerFreightEditorPage extends BottomSheetPage {
   final ProducerDetailEntity producer;
-  final int? selectedIndex;
+  final bool useStepFreight;
+  final int? selectedStepIndex;
 
-  const ProducerFreightEditorPage({super.key, required this.producer, required this.selectedIndex});
+  const ProducerFreightEditorPage({super.key, required this.producer, required this.useStepFreight, this.selectedStepIndex});
 
   @override
   BottomSheetState<BasePage> createBottomSheetState() => ProducerFreightEditorState();
@@ -22,7 +24,8 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
 
   late final _controller = Get.put(ProducerFreightEditorController(
       producer: widget.producer,
-      selectedIndex: widget.selectedIndex
+      useStepFreight: widget.useStepFreight,
+      selectedStepIndex: widget.selectedStepIndex
   ));
 
   @override
@@ -41,9 +44,12 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
         ],
       ),
       SliverToBoxAdapter(
-        child: TextInputWidget(
-            controller: _controller.nameInputController,
-            label: '名称(选填)'
+        child: Offstage(
+          offstage: widget.useStepFreight,
+          child: TextInputWidget(
+              controller: _controller.nameInputController,
+              label: '名称(选填)'
+          ),
         ),
       ),
       SliverToBoxAdapter(
@@ -54,34 +60,27 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
         ),
       ),
       Obx(() => SliverList(
-          delegate: SliverChildListDelegate(_controller.tagFreightWrappers.mapIndex(_buildTagFreight) ?? [])
+          delegate: SliverChildListDelegate(_controller.tagFreights.mapIndex(_buildTagFreight) ?? [])
       )),
       // Obx(() => SliverFixedExtentList(
       //     delegate: SliverChildListDelegate(_controller.tagFreightWrappers.mapIndex(_buildTagFreight) ?? []),
       //     itemExtent: 50
       // )),
       SliverToBoxAdapter(
-        child: Obx(() => Wrap(
-          children: _controller.provinceWrappers.map((e) => _buildProvince(e)).toList(),
+        child: Obx(() => Offstage(
+          offstage: !widget.useStepFreight,
+          child: Wrap(
+            children: _controller.provinceWrappers.map((e) => _buildProvince(e)).toList(),
+          ),
         )),
       )
     ],
   );
 
-  Widget _buildTagFreight(int index, TagFreightWrapper tagFreightWrapper) {
-    return Row(
-        children: [
-          Expanded(
-              child: TextInputWidget.number(
-                  controller: _controller.tagFreightControllerMap[tagFreightWrapper.tagFreight.tag?.id ?? ''] ?? TextEditingController(),
-                  label: '${tagFreightWrapper.tagFreight.tag?.name}价格（选填）'
-              )
-          ),
-          Checkbox(
-              value: tagFreightWrapper.isChecked,
-              onChanged: (isChecked) => _controller.toggleTagFreightCheck(index, isChecked)
-          )
-        ]
+  Widget _buildTagFreight(int index, TagFreightEntity tagFreight) {
+    return TextInputWidget.number(
+        controller: _controller.tagFreightControllerMap[tagFreight.tag?.id ?? '']!,
+        label: '${tagFreight.tag?.name}价格（选填）'
     );
   }
 

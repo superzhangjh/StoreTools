@@ -67,22 +67,31 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
               ],
             ),
           ),
-          Obx(() => SliverList(
-              delegate: SliverChildListDelegate(
-                  _controller.producer.value.freights?.mapIndex((index, element) => Offstage(
-                    offstage: !_controller.producer.value.useFreight,
-                    child: _buildFreight(index, element),
-                  ))?.toList() ?? []
-              ))),
           Obx(() => SliverToBoxAdapter(
             child: Offstage(
-              offstage: !_controller.producer.value.useFreight,
-              child: TextButton(
-                onPressed: () => _showFreightEditor(null),
-                child: const Text('新增运费'),
-              ),
+              offstage: _controller.producer.value.useStepFreight || _controller.producer.value.freight == null,
+              child: _buildFreight(_controller.producer.value.freight, false),
             ),
-          ))
+          )),
+          Obx(() => SliverList(
+              delegate: SliverChildListDelegate(
+                  _controller.producer.value.stepFreights?.mapIndex((index, element) => Offstage(
+                    offstage: _controller.producer.value.useStepFreight,
+                    child: _buildFreight(element, true, index: index),
+                  )) ?? []
+              ))),
+          Obx(() {
+            final useStepFreight = _controller.producer.value.useStepFreight;
+            return SliverToBoxAdapter(
+              child: Offstage(
+                offstage: !useStepFreight || _controller.producer.value.freight != null,
+                child: TextButton(
+                  onPressed: () => _showFreightEditor(useStepFreight),
+                  child: const Text('新增运费'),
+                ),
+              ),
+            );
+          })
         ],
       ),
     );
@@ -110,26 +119,30 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   }
 
   Widget _buildFreightRatio(String title, bool value) => Obx(() => GestureDetector(
-    onTap: () => _controller.toggleUseFreight(value),
+    onTap: () => _controller.toggleUseStepFreight(value),
     child: Row(
       children: [
-        Icon(_controller.producer.value.useFreight == value? Icons.radio_button_checked: Icons.radio_button_off),
+        Icon(_controller.producer.value.useStepFreight == value? Icons.radio_button_checked: Icons.radio_button_off),
         Text(title)
       ],
     ),
   ));
 
-  Widget _buildFreight(int index, FreightEntity freightEntity) {
+  Widget _buildFreight(FreightEntity? freightEntity, bool useStepFreight, { int? index }) {
     return TextButton(
-      onPressed: () => _showFreightEditor(index),
-      child: Text("${freightEntity.name}  运费:${freightEntity.price}"),
+      onPressed: () => _showFreightEditor(useStepFreight, index: index),
+      child: Text("${freightEntity?.name}  运费:${freightEntity?.price}"),
     );
   }
 
   ///打开运费编辑
   ///[freightEntity]运费信息，不传则创建新的
-  _showFreightEditor(int? index) async {
-    bottomSheetPage(ProducerFreightEditorPage(producer: _controller.producer.value, selectedIndex: index));
+  _showFreightEditor(bool useStepFreight, {int? index}) async {
+    bottomSheetPage(ProducerFreightEditorPage(
+        producer: _controller.producer.value,
+        useStepFreight: useStepFreight,
+        selectedStepIndex: index
+    ));
   }
 
   @override

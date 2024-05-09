@@ -16,12 +16,12 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   String name = '';
   //分类规格
   List<ProducerCategoryEntity> categories = [];
-  ///是否使用运费模板
-  bool useFreight = false;
+  ///使用阶梯运费
+  bool useStepFreight = false;
+  ///统一运费（与阶梯运费互斥）
+  FreightEntity? freight;
   ///阶梯运费
-  List<FreightEntity>? freights;
-  ///统一的运费
-  double unifiedPrice = 0;
+  List<FreightEntity>? stepFreights;
   ///标签
   List<ProducerTagEntity>? tags;
 
@@ -30,9 +30,9 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
     ..objectId = json['objectId']
     ..name = json['name']
     ..categories = json.getList("categories", converter: (e) => ProducerCategoryEntity().fromJson(e)) ?? []
-    ..useFreight = json['useFreight']
-    ..freights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e))
-    ..unifiedPrice = json.getDouble('unifiedPrice') ?? 0
+    ..useStepFreight = json.getBool('useStepFreight') ?? false
+    ..freight = json.getObject("freight", converter: (e) => FreightEntity().fromJson(e))
+    ..stepFreights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e))
     ..tags = json.getList('tags', converter: (e) => ProducerTagEntity().fromJson(e));
 
   @override
@@ -40,9 +40,9 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
     'objectId': objectId,
     'name': name,
     'categories': categories.map((e) => e.toJson()).toList(),
-    'useFreight': useFreight,
-    'freights': freights?.map((e) => e.toJson()).toList(),
-    'unifiedPrice': unifiedPrice,
+    'useStepFreight': useStepFreight,
+    'freight': freight?.toJson(),
+    'stepFreights': stepFreights?.map((e) => e.toJson()).toList(),
     'tags': tags?.map((e) => e.toJson()).toList()
   };
 }
