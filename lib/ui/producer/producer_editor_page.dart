@@ -84,7 +84,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
             final useStepFreight = _controller.producer.value.useStepFreight;
             return SliverToBoxAdapter(
               child: Offstage(
-                offstage: !useStepFreight || _controller.producer.value.freight != null,
+                offstage: !useStepFreight && _controller.producer.value.freight != null,
                 child: TextButton(
                   onPressed: () => _showFreightEditor(useStepFreight),
                   child: const Text('新增运费'),

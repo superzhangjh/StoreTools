@@ -20,9 +20,14 @@ extension MapExt on Map<String, dynamic> {
   }
 
   ///获取object类型
-  T? getObject<T>(dynamic key, { T Function(dynamic t)? converter }) {
+  T? getObject<T>(dynamic key, { T Function(dynamic)? converter }) {
     if (containsKey(key)) {
       var value = this[key];
+      logDebug("类型1111:${value.runtimeType}");
+      if (value is Map) {
+        logDebug("类型1111执行");
+        value = value.map((key, val) => MapEntry(key.toString(), val));
+      }
       return converter != null && value != null? converter(value): value;
     }
     return null;

@@ -33,7 +33,7 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
     controller: controller,
     slivers: [
       SliverAppBar(
-        title: const Text('阶梯运费'),
+        title: Text(widget.useStepFreight? '阶梯运费': '统一运费'),
         floating: true,
         pinned: true,
         actions: [
@@ -45,7 +45,7 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
       ),
       SliverToBoxAdapter(
         child: Offstage(
-          offstage: widget.useStepFreight,
+          offstage: !widget.useStepFreight,
           child: TextInputWidget(
               controller: _controller.nameInputController,
               label: '名称(选填)'
