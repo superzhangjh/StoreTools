@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/entity/base_entity.dart';
 
-import '../../const/apis.dart';
+import '../apis.dart';
 
 class ApiUtils {
   ///将LcObject的列表转为指定的类型
@@ -15,10 +15,8 @@ class ApiUtils {
       for (var lcObject in list!) {
         var json = t.toJson();
         fillLcObjectToMap(lcObject, json);
-        log('调试fillLcObjectToMap后：${jsonEncode(json)}');
         final entity = t.fromJson(json);
         result.add(entity);
-        log('调试fromJson后：${jsonEncode(entity)}');
       }
     }
     return result;

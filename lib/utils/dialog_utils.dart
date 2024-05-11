@@ -31,7 +31,7 @@ Future<String?> showInputDialog<T>(
                 onPressed: () async {
                   var text = controller.text.toString().trim();
                   var pop = await onConfirm(text);
-                  if (pop) Navigator.pop(context);
+                  if (pop) Get.back();
                 },
                 child: const Text('确定')
             )
@@ -46,15 +46,12 @@ showConfirmDialog(
       String title = '提示',
       String negativeText = '取消',
       String positiveText = '确定',
-      FutureOr<bool> Function()? onNegativeClick,
-      FutureOr<bool> Function()? onPositiveClick,
+      bool popWhenNegativeClick = true,
+      bool popWhenPositiveClick = true,
+      void Function()? onNegativeClick,
+      void Function()? onPositiveClick,
     }
 ) {
-  onPressed(FutureOr<bool> Function()? onClick) async {
-    var pop = true;
-    if (onClick != null) pop = await onClick();
-    if (pop) Get.back();
-  }
   return Get.dialog(
       AlertDialog(
         title: Text(title),
@@ -62,11 +59,17 @@ showConfirmDialog(
         actionsAlignment: MainAxisAlignment.spaceBetween,
         actions: [
           TextButton(
-              onPressed: () => onPressed(onNegativeClick),
+              onPressed: () {
+                if (popWhenNegativeClick) Get.back();
+                if (onNegativeClick != null) onNegativeClick();
+              },
               child: Text(negativeText)
           ),
           TextButton(
-              onPressed: () => onPressed(onPositiveClick),
+              onPressed: () {
+                if (popWhenPositiveClick) Get.back();
+                if (onPositiveClick != null) onPositiveClick();
+              },
               child: Text(positiveText)
           )
         ],

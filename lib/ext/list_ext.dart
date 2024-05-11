@@ -8,12 +8,20 @@ extension ListExt<T> on List<T>? {
   }
 
   ///下标安全地设置值
-  bool setSafe(int? index, T element) {
-    if (this != null && index != null && index >= 0 && index < this!.length) {
+  bool setSafe(int? index, T? element) {
+    if (this != null && index != null && index >= 0 && index < this!.length && element != null) {
       this![index] = element;
       return true;
     }
     return false;
+  }
+
+  ///下标安全地删除值
+  T? removeAtSafe(int? index) {
+    if (this != null && index != null && index >= 0 && index < this!.length) {
+      return this!.removeAt(index);
+    }
+    return null;
   }
 
   ///查找满足条件的元素
@@ -73,6 +81,7 @@ extension ListExt<T> on List<T>? {
     return list;
   }
 
+  ///遍历列表，带下标
   List<E>? mapIndex<E>(E Function(int index, T element) toElement) {
     List<E>? result;
     if (this != null) {
@@ -82,5 +91,24 @@ extension ListExt<T> on List<T>? {
       }
     }
     return result;
+  }
+
+  ///添加或者忽略参数
+  addOrIgnore(T? t) {
+    if (t != null) {
+      this?.add(t);
+    }
+  }
+
+  ///替换满足条件的第一个
+  ///[returns]是否替换成功
+  bool replaceWhen(T newElement, bool Function(T element) test) {
+    if (this != null) {
+      final index = findIndex(test);
+      if (this.setSafe(index, newElement)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

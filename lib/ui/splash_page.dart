@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/base/base_page.dart';
-import 'package:storetools/const/routes.dart';
+import 'package:storetools/route/route_kit.dart';
+import 'package:storetools/route/route_paths.dart';
+import 'package:storetools/utils/log_utils.dart';
 
 class SplashPage extends BasePage {
   const SplashPage({super.key});
@@ -21,13 +24,8 @@ class SplashState extends BaseState<SplashPage> {
 
   _initUser() async {
     var currentUser = await LCUser.getCurrent();
-    print("当前用户: $currentUser");
-    if (currentUser != null) {
-      await Navigator.pushNamed(context, Routes.home);
-    } else {
-      await Navigator.pushNamed(context, Routes.login);
-    }
-    Navigator.pop(context);
+    logDebug("当前用户: $currentUser");
+    RouteKit.navigate(currentUser == null? RoutePaths.login: RoutePaths.home, offPage: true);
   }
 
   @override
@@ -42,5 +40,4 @@ class SplashState extends BaseState<SplashPage> {
       ),
     );
   }
-
 }

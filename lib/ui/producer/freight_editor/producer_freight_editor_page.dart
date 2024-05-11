@@ -21,12 +21,12 @@ class ProducerFreightEditorPage extends BottomSheetPage {
 }
 
 class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorPage> {
-
   late final _controller = Get.put(ProducerFreightEditorController(
       producer: widget.producer,
       useStepFreight: widget.useStepFreight,
       selectedStepIndex: widget.selectedStepIndex
   ));
+  late final isCreateFreight = widget.useStepFreight? widget.selectedStepIndex == null: widget.producer.freight == null;
 
   @override
   CustomScrollView buildScroll(BuildContext context, ScrollController controller) => CustomScrollView(
@@ -37,6 +37,13 @@ class ProducerFreightEditorState extends BottomSheetState<ProducerFreightEditorP
         floating: true,
         pinned: true,
         actions: [
+          Offstage(
+            offstage: isCreateFreight,
+            child: TextButton(
+                onPressed: _controller.delete,
+                child: const Text('删除')
+            ),
+          ),
           TextButton(
               onPressed: _controller.save,
               child: const Text('保存')

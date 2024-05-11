@@ -3,7 +3,7 @@ import 'package:storetools/entity/goods_sku_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 ///sku组
-class GoodsSkuGroupEntity implements BaseEntity<GoodsSkuGroupEntity> {
+class GoodsSkuGroupEntity extends BaseEntity<GoodsSkuGroupEntity> {
   String name = '';
   List<GoodsSkuEntity> skus = [];
 

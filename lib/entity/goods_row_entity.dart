@@ -1,7 +1,7 @@
 import 'package:storetools/entity/base_entity.dart';
 
 ///Excel读取到的商品行信息（与SKU一一绑定）
-class GoodsRowEntity implements BaseEntity<GoodsRowEntity> {
+class GoodsRowEntity extends BaseEntity<GoodsRowEntity> {
   //第三方的id
   String thirdPartyId = '';
   //名称

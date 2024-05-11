@@ -7,13 +7,15 @@ import 'package:storetools/base/bottom_sheet_page.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
+import 'package:storetools/ext/text_editing_controller_ext.dart';
+import 'package:storetools/ui/producer/category/producer_category_editor_page.dart';
 import 'package:storetools/ui/producer/producer_editor_controller.dart';
 import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/widget/radio_button.dart';
 
-import '../../entity/selector_entity.dart';
-import '../../widget/text_input_widget.dart';
+import '../../../entity/selector_entity.dart';
+import '../../../widget/text_input_widget.dart';
 
 class ProducerSpecPage extends BottomSheetPage {
   final ProducerCategoryEntity categoryEntity;
@@ -39,7 +41,10 @@ class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
   }
 
   _initTags() {
-    tagSelectors.value = _controller.producer.value.tags?.map((e) => SelectorEntity(isSelected: false, data: e)).toList() ?? [];
+    tagSelectors.value = widget.categoryEntity.tags?.map((e) => SelectorEntity(
+        isSelected: _specEntity?.tagId == e.id,
+        data: e
+    )).toList() ?? [];
   }
 
   @override
@@ -79,12 +84,6 @@ class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
               ],
             ),
           )),
-        ),
-        SliverToBoxAdapter(
-          child: TextButton(
-            onPressed: _createTag,
-            child: const Text('新建标签'),
-          ),
         )
       ],
     );
@@ -111,17 +110,9 @@ class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
     );
   }
 
-  _createTag() {
-    showInputDialog(context, '新建标签', '标签名称', (text) {
-      _controller.createTag(text);
-      _initTags();
-      return true;
-    });
-  }
-
   _save() async {
     final name = _nameController.text.trim();
-    final price = double.parse(_priceController.text.trim());
+    final price = _priceController.doubleValue() ?? 0;
     final tagId = tagSelectors.find((element) => element.isSelected)?.data.id;
     if (await _controller.createOrUpdateSpec(widget.categoryEntity, widget.specIndex, name, price, tagId)) {
       Get.back();

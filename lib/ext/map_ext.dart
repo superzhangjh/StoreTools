@@ -23,12 +23,27 @@ extension MapExt on Map<String, dynamic> {
   T? getObject<T>(dynamic key, { T Function(dynamic)? converter }) {
     if (containsKey(key)) {
       var value = this[key];
-      logDebug("类型1111:${value.runtimeType}");
       if (value is Map) {
-        logDebug("类型1111执行");
-        value = value.map((key, val) => MapEntry(key.toString(), val));
+        //这里不加as Map<String, dynamic>会报类型错误，还是识别成Map<dynamic, dynamic>
+        value = value.map((key, val) => MapEntry(key.toString(), val)) as Map<String, dynamic>;
       }
       return converter != null && value != null? converter(value): value;
+    }
+    return null;
+  }
+
+  int? getInt(dynamic key) {
+    if (containsKey(key)) {
+      final value = this[key];
+      if (value is int) {
+        return value;
+      } else if (value is String) {
+        try {
+          return int.parse(value);
+        } catch (e) {
+          logDebug(e.toString());
+        }
+      }
     }
     return null;
   }

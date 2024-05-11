@@ -1,7 +1,7 @@
 import 'package:storetools/entity/base_entity.dart';
 
 ///sku
-class GoodsSkuEntity implements BaseEntity<GoodsSkuEntity> {
+class GoodsSkuEntity extends BaseEntity<GoodsSkuEntity> {
   //id
   String id = '';
   //名称

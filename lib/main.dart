@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:leancloud_storage/leancloud.dart';
-import 'package:storetools/const/routes.dart';
+import 'package:storetools/route/route_paths.dart';
 import 'package:storetools/ui/goods_edit_page.dart';
 import 'package:storetools/ui/goods/goods_page.dart';
 import 'package:storetools/ui/goods_preview_page.dart';
@@ -40,16 +40,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: Routes.splash,
+      initialRoute: RoutePaths.splash,
       routes: {
-        Routes.splash: (_) => const SplashPage(),
-        Routes.login: (_) => const LoginPage(),
-        Routes.home: (_) => const HomePage(),
-        Routes.goods: (_) => const GoodsPage(),
-        Routes.goodsEdit: (_) => const GoodsEditPage(),
-        Routes.goodsPreview: (_) => const GoodsPreviewPage(),
-        Routes.producerHome: (_) => const ProducerHomePage(),
-        Routes.producerEditor: (_) => const ProducerEditorPage()
+        RoutePaths.splash: (_) => const SplashPage(),
+        RoutePaths.login: (_) => const LoginPage(),
+        RoutePaths.home: (_) => const HomePage(),
+        RoutePaths.goods: (_) => const GoodsPage(),
+        RoutePaths.goodsEdit: (_) => const GoodsEditPage(),
+        RoutePaths.goodsPreview: (_) => const GoodsPreviewPage(),
+        RoutePaths.producerHome: (_) => const ProducerHomePage(),
+        RoutePaths.producerEditor: (_) => const ProducerEditorPage()
       },
       debugShowCheckedModeBanner: false,
     );

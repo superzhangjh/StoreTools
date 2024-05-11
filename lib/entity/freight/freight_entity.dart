@@ -3,7 +3,7 @@ import 'package:storetools/entity/freight/tag_freight_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 ///运费
-class FreightEntity implements BaseEntity<FreightEntity> {
+class FreightEntity extends BaseEntity<FreightEntity> {
   String name = '';
   //通用价格
   double price = 0;

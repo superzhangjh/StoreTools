@@ -1,5 +1,5 @@
 import 'dart:developer';
 
-void logDebug(String msg) {
-  log(msg);
+void logDebug(String? msg) {
+  log(msg ?? '');
 }

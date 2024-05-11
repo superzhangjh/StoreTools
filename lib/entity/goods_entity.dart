@@ -1,5 +1,5 @@
 
-import 'package:storetools/const/apis.dart';
+import 'package:storetools/api/apis.dart';
 import 'package:storetools/entity/goods_sku_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ext/map_ext.dart';
@@ -8,7 +8,7 @@ import '../api/entity/api_entity.dart';
 import 'goods_row_entity.dart';
 import 'goods_sku_group_entity.dart';
 
-class GoodsEntity implements ApiEntity<GoodsEntity> {
+class GoodsEntity extends ApiEntity<GoodsEntity> {
   @override String className =  Apis.lcNameGoods;
   @override String? objectId;
 

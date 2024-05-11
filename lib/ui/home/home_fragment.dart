@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:storetools/base/base_page.dart';
-import 'package:storetools/const/routes.dart';
 import 'package:storetools/entity/shop_entity.dart';
+import 'package:storetools/route/route_kit.dart';
+import 'package:storetools/route/route_paths.dart';
 
 class HomeFragment extends BasePage {
   final ShopEntity shopEntity;
@@ -27,13 +28,13 @@ class HomeState extends BaseState<HomeFragment> {
               Text("店铺：${widget.shopEntity.name}"),
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, Routes.goods);
+                    RouteKit.navigate(RoutePaths.goods);
                   },
                   child: const Text('商品列表')
               ),
               TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, Routes.producerHome);
+                    RouteKit.navigate(RoutePaths.producerHome);
                   },
                   child: const Text('货源管理')
               ),

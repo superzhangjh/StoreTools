@@ -1,6 +1,6 @@
 import 'package:storetools/entity/base_entity.dart';
 
-class ProvinceEntity implements BaseEntity<ProvinceEntity> {
+class ProvinceEntity extends BaseEntity<ProvinceEntity> {
   String name = '';
   String code = '';
 

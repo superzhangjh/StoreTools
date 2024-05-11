@@ -5,6 +5,7 @@ import 'package:storetools/entity/freight/freight_entity.dart';
 import 'package:storetools/entity/freight/tag_freight_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ext/text_editing_controller_ext.dart';
+import 'package:storetools/route/route_result.dart';
 import 'package:storetools/utils/province_utils.dart';
 
 import '../../../const/provinces.dart';
@@ -62,16 +63,18 @@ class ProducerFreightEditorController extends BaseController {
     tagFreightControllerMap.clear();
     final selectedFreight = getSelectedFreight();
     List<TagFreightEntity>? data;
-    producer.tags?.forEach((tag) {
-      final found = selectedFreight?.tagFreights?.find((element) => element.tag?.id == tag.id);
-      final price = found?.price;
-      final tagFreight = TagFreightEntity()
-        ..price = price ?? 0
-        ..tag = tag;
-      tagFreightControllerMap[tagFreight.tag!.id] = TextEditingController(text: price?.toString());
-      data ??= [];
-      data?.add(tagFreight);
-    });
+    for (var category in producer.categories) {
+      category.tags?.forEach((tag) {
+        final found = selectedFreight?.tagFreights?.find((element) => element.tag?.id == tag.id);
+        final price = found?.price;
+        final tagFreight = TagFreightEntity()
+          ..price = price ?? 0
+          ..tag = tag;
+        tagFreightControllerMap[tagFreight.tag!.id] = TextEditingController(text: price?.toString());
+        data ??= [];
+        data?.add(tagFreight);
+      });
+    }
     if (data != null) {
       tagFreights.addAll(data!);
     }
@@ -106,7 +109,6 @@ class ProducerFreightEditorController extends BaseController {
           onPositiveClick: () {
             wrapper.enable = true;
             _toggleProvinceSelect(wrapper);
-            return true;
           });
     }
   }
@@ -155,7 +157,18 @@ class ProducerFreightEditorController extends BaseController {
     } else {
       producer.freight = selectedFreight;
     }
-    Get.back();
+    Get.back(result: RouteResult(code: RouteResult.resultOk));
+  }
+
+  delete() {
+    showConfirmDialog('确认删除？', positiveText: '删除', onPositiveClick: () {
+      if (useStepFreight) {
+        producer.stepFreights?.removeAtSafe(selectedStepIndex);
+      } else {
+        producer.freight = null;
+      }
+      Get.back(result: RouteResult(code: RouteResult.resultDelete));
+    });
   }
 }
 

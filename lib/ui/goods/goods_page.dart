@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/api/api.dart';
-import 'package:storetools/const/apis.dart';
-import 'package:storetools/const/routes.dart';
+import 'package:storetools/api/apis.dart';
+import 'package:storetools/route/route_kit.dart';
+import 'package:storetools/route/route_paths.dart';
 import 'package:storetools/entity/goods_entity.dart';
 import 'package:storetools/ui/goods/view/goods_item_view.dart';
 import 'package:storetools/user/user_kit.dart';
@@ -61,19 +62,19 @@ class GoodsState extends BaseState<GoodsPage> {
         onSelected: (value) async {
           switch (value) {
             case menuAdd:
-              Navigator.pushNamed(context, Routes.goodsEdit);
+              Navigator.pushNamed(context, RoutePaths.goodsEdit);
               break;
             case menuExcel:
               var filePath = await pickExcel();
               _filePath = filePath;
               if (filePath != null) {
                 print("选择的文件: $filePath");
-                Navigator.pushNamed(context, Routes.goodsPreview, arguments: { 'filePath': filePath });
+                Navigator.pushNamed(context, RoutePaths.goodsPreview, arguments: { 'filePath': filePath });
               }
               break;
             case 'selectPre':
               if (_filePath != null) {
-                Navigator.pushNamed(context, Routes.goodsPreview, arguments: { 'filePath': _filePath });
+                Navigator.pushNamed(context, RoutePaths.goodsPreview, arguments: { 'filePath': _filePath });
               }
               break;
           }

@@ -1,8 +1,8 @@
 import 'package:storetools/api/entity/api_entity.dart';
-import 'package:storetools/const/apis.dart';
+import 'package:storetools/api/apis.dart';
 
 ///店铺
-class ShopEntity implements ApiEntity<ShopEntity> {
+class ShopEntity extends ApiEntity<ShopEntity> {
   @override String? objectId;
   @override String className = Apis.lcNameShop;
   String name = '';

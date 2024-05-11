@@ -2,7 +2,7 @@ import 'package:storetools/entity/base_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 ///货源规格
-class ProducerSpecEntity implements BaseEntity<ProducerSpecEntity> {
+class ProducerSpecEntity extends BaseEntity<ProducerSpecEntity> {
   ///名称
   String name = '';
   ///该规格的价值（元）

@@ -6,9 +6,13 @@ import 'package:storetools/api/api.dart';
 import 'package:storetools/base/base_page.dart';
 import 'package:storetools/const/arguments.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
+import 'package:storetools/ext/list_ext.dart';
+import 'package:storetools/route/route_kit.dart';
+import 'package:storetools/route/route_result.dart';
+import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
-import '../../const/routes.dart';
+import '../../route/route_paths.dart';
 
 class ProducerHomePage extends BasePage {
   const ProducerHomePage({super.key});
@@ -42,7 +46,7 @@ class ProducerHomeState extends State<ProducerHomePage> {
       ),
       body: ListView.builder(
         itemCount: _producers?.length ?? 0,
-          itemBuilder: (context, index) => _buildProducer(_producers![index])
+          itemBuilder: (context, index) => _buildProducer(_producers![index], index)
       ),
     );
   }
@@ -52,7 +56,7 @@ class ProducerHomeState extends State<ProducerHomePage> {
         onSelected: (value) async {
           switch (value) {
             case menuAdd:
-              _createProducer(context);
+              _createProducer();
               break;
           }
         },
@@ -66,10 +70,18 @@ class ProducerHomeState extends State<ProducerHomePage> {
     );
   }
 
-  Widget _buildProducer(ProducerDetailEntity producer) {
+  Widget _buildProducer(ProducerDetailEntity producer, int index) {
     return TextButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Routes.producerEditor, arguments: { Arguments.producer: producer });
+        onPressed: () async {
+          final result = await RouteKit.toProducerEditor(producer: producer);
+          switch (result.code) {
+            case RouteResult.resultOk:
+              setState(() => _producers?.setSafe(index, result.data));
+              break;
+            case RouteResult.resultDelete:
+              setState(() => _producers?.removeAtSafe(index));
+              break;
+          }
         },
         child: Text(producer.name)
     );
@@ -87,10 +99,14 @@ class ProducerHomeState extends State<ProducerHomePage> {
     }
   }
 
-  _createProducer(BuildContext context) async {
-    var producer = await Navigator.pushNamed(context, Routes.producerEditor);
-    if (producer != null && producer is ProducerDetailEntity) {
-      _requestProducers();
+  _createProducer() async {
+    final result = await RouteKit.toProducerEditor();
+    logDebug("跳转结果: ${jsonEncode(result)}");
+    if (result.code == RouteResult.resultOk) {
+      setState(() {
+        _producers ??= [];
+        _producers?.addOrIgnore(result.data);
+      });
     }
   }
 }

@@ -6,7 +6,7 @@ import 'package:storetools/ext/list_ext.dart';
 
 import '../../utils/log_utils.dart';
 
-class ProducerSkuEntity implements BaseEntity<ProducerSkuEntity> {
+class ProducerSkuEntity extends BaseEntity<ProducerSkuEntity> {
   ///货源价
   double price = 0;
   ///名称

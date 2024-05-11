@@ -7,18 +7,22 @@ import 'package:storetools/base/base_controller.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
+import 'package:storetools/route/route_result.dart';
+import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/utils/short_uuid_utils.dart';
 
 import '../../api/api.dart';
+import '../../base/bottom_sheet_page.dart';
 import '../../const/arguments.dart';
 import '../../entity/producer/producer_detail_entity.dart';
 import '../../entity/producer/producer_spec_entity.dart';
 import '../../utils/route_arguments_utils.dart';
 import '../../utils/toast_utils.dart';
+import 'freight_editor/producer_freight_editor_page.dart';
 
 class ProducerEditorController extends BaseController {
-  late Rx<ProducerDetailEntity> producer = Rx(getArgument(Arguments.producer) ?? ProducerDetailEntity());
+  late Rx<ProducerDetailEntity> producer = Rx(getArgument<ProducerDetailEntity>(Arguments.producer)?.copy() ?? ProducerDetailEntity());
   late final TextEditingController nameController;
 
   @override
@@ -28,20 +32,27 @@ class ProducerEditorController extends BaseController {
   }
 
   ///新建分类
-  FutureOr<bool> createCategory(String name) {
+  FutureOr<bool> createOrUpdateCategory(bool create, String name, List<ProducerTagEntity> tags) {
     if (name.isEmpty) {
       showToast('名称未填写');
       return false;
     }
-    var found = producer.value.categories.find((e) => e.name == name);
-    if (found != null) {
+
+    var category = producer.value.categories.find((e) => e.name == name);
+    if (create && category != null) {
       showToast('该分类已存在');
       return false;
     }
-    var category = ProducerCategoryEntity();
+
+    category ??= ProducerCategoryEntity();
     category.name = name;
+    category.tags = tags;
     producer.update((val) {
-      val?.categories.add(category);
+      if (create) {
+        val?.categories.add(category!);
+      } else {
+        val?.categories.replaceWhen(category!, (element) => element.name == category!.name);
+      }
     });
     return true;
   }
@@ -81,15 +92,21 @@ class ProducerEditorController extends BaseController {
     });
   }
 
-  ///创建标签
-  createTag(String name) {
-    producer.update((val) {
-      final tagEntity = ProducerTagEntity()
-        ..id = ShortUUidUtils.generateShortId()
-        ..name = name;
-      val?.tags ??= [];
-      val?.tags?.add(tagEntity);
-    });
+  ///运费编辑
+  ///[useStepFreight]使用运费模板
+  showFreightEditor(bool useStepFreight, {int? index}) async {
+    final result = await bottomSheetPage<RouteResult>(ProducerFreightEditorPage(
+        producer: producer.value,
+        useStepFreight: useStepFreight,
+        selectedStepIndex: index
+    ));
+    logDebug("请求结果:${jsonEncode(result)}");
+    switch (result?.code) {
+      case RouteResult.resultOk:
+      case RouteResult.resultDelete:
+        producer.refresh();
+        break;
+    }
   }
 
   ///保存数据到服务器
@@ -104,10 +121,26 @@ class ProducerEditorController extends BaseController {
       return;
     }
 
-    var result = await Api.createOrUpdate(producer.value);
+    final result = await Api.createOrUpdate(producer.value);
     if (result.isSuccess()) {
       showToast('保存成功');
-      Get.back(result: result.data);
+      Get.back(result: RouteResult(code: RouteResult.resultOk, data: result.data));
+    } else {
+      showToast(result.msg);
+    }
+  }
+
+  delete() {
+    showConfirmDialog('删除后无法恢复数据，确认删除？', positiveText: '删除', onPositiveClick: () {
+      _doDelete();
+    });
+  }
+
+  _doDelete() async {
+    final result = await Api.createOrUpdate(producer.value);
+    if (result.isSuccess()) {
+      showToast('删除成功');
+      Get.back(result: RouteResult(code: RouteResult.resultDelete, data: result.data));
     } else {
       showToast(result.msg);
     }

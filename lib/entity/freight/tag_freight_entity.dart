@@ -3,7 +3,7 @@ import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 ///指定标签的运费
-class TagFreightEntity implements BaseEntity<TagFreightEntity> {
+class TagFreightEntity extends BaseEntity<TagFreightEntity> {
   double price = 0;
   ProducerTagEntity? tag;
 

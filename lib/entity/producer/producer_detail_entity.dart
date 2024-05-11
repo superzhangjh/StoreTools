@@ -1,5 +1,5 @@
 import 'package:storetools/api/entity/api_entity.dart';
-import 'package:storetools/const/apis.dart';
+import 'package:storetools/api/apis.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
@@ -7,7 +7,7 @@ import 'package:storetools/ext/map_ext.dart';
 import '../freight/freight_entity.dart';
 
 ///货源详情
-class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
+class ProducerDetailEntity extends ApiEntity<ProducerDetailEntity> {
   @override
   String className = Apis.lcNameProducer;
   @override
@@ -22,8 +22,6 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
   FreightEntity? freight;
   ///阶梯运费
   List<FreightEntity>? stepFreights;
-  ///标签
-  List<ProducerTagEntity>? tags;
 
   @override
   ProducerDetailEntity fromJson(Map<String, dynamic> json) => ProducerDetailEntity()
@@ -32,8 +30,7 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
     ..categories = json.getList("categories", converter: (e) => ProducerCategoryEntity().fromJson(e)) ?? []
     ..useStepFreight = json.getBool('useStepFreight') ?? false
     ..freight = json.getObject("freight", converter: (e) => FreightEntity().fromJson(e))
-    ..stepFreights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e))
-    ..tags = json.getList('tags', converter: (e) => ProducerTagEntity().fromJson(e));
+    ..stepFreights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e));
 
   @override
   Map<String, dynamic> toJson() => {
@@ -42,7 +39,6 @@ class ProducerDetailEntity implements ApiEntity<ProducerDetailEntity> {
     'categories': categories.map((e) => e.toJson()).toList(),
     'useStepFreight': useStepFreight,
     'freight': freight?.toJson(),
-    'stepFreights': stepFreights?.map((e) => e.toJson()).toList(),
-    'tags': tags?.map((e) => e.toJson()).toList()
+    'stepFreights': stepFreights?.map((e) => e.toJson()).toList()
   };
 }

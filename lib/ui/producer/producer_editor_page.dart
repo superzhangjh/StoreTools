@@ -4,10 +4,14 @@ import 'package:storetools/base/base_page.dart';
 import 'package:storetools/base/bottom_sheet_page.dart';
 import 'package:storetools/entity/freight/freight_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
+import 'package:storetools/ext/string_ext.dart';
+import 'package:storetools/route/route_result.dart';
+import 'package:storetools/ui/producer/category/producer_category_editor_page.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_page.dart';
 import 'package:storetools/ui/producer/producer_editor_controller.dart';
-import 'package:storetools/ui/producer/producer_spec_page.dart';
+import 'package:storetools/ui/producer/category/producer_spec_page.dart';
 import 'package:storetools/utils/dialog_utils.dart';
+import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
 
 import '../../entity/producer/producer_category_entity.dart';
@@ -29,13 +33,26 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   final _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    logDebug("使用阶梯运费：${_controller.producer.value.useStepFreight}");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('货源编辑'),
         actions: [
+          Offstage(
+            offstage: _controller.producer.value.objectId.isNullOrEmpty(),
+            child: TextButton(
+              onPressed: _controller.delete,
+              child: const Text('删除'),
+            ),
+          ),
           TextButton(
-            onPressed: () => _controller.save(),
+            onPressed: _controller.save,
             child: const Text('保存'),
           )
         ]
@@ -52,7 +69,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
           SliverToBoxAdapter(
             child: TextButton(
               onPressed: () {
-                showInputDialog(context, '新增分类', '名称', _controller.createCategory);
+                bottomSheetPage(const ProducerCategoryEditorPage());
               },
               child: const Text('新增分类'),
             ),
@@ -76,7 +93,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
           Obx(() => SliverList(
               delegate: SliverChildListDelegate(
                   _controller.producer.value.stepFreights?.mapIndex((index, element) => Offstage(
-                    offstage: _controller.producer.value.useStepFreight,
+                    offstage: !_controller.producer.value.useStepFreight,
                     child: _buildFreight(element, true, index: index),
                   )) ?? []
               ))),
@@ -86,7 +103,7 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
               child: Offstage(
                 offstage: !useStepFreight && _controller.producer.value.freight != null,
                 child: TextButton(
-                  onPressed: () => _showFreightEditor(useStepFreight),
+                  onPressed: () => _controller.showFreightEditor(useStepFreight),
                   child: const Text('新增运费'),
                 ),
               ),
@@ -130,19 +147,9 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
 
   Widget _buildFreight(FreightEntity? freightEntity, bool useStepFreight, { int? index }) {
     return TextButton(
-      onPressed: () => _showFreightEditor(useStepFreight, index: index),
+      onPressed: () => _controller.showFreightEditor(useStepFreight, index: index),
       child: Text("${freightEntity?.name}  运费:${freightEntity?.price}"),
     );
-  }
-
-  ///打开运费编辑
-  ///[freightEntity]运费信息，不传则创建新的
-  _showFreightEditor(bool useStepFreight, {int? index}) async {
-    bottomSheetPage(ProducerFreightEditorPage(
-        producer: _controller.producer.value,
-        useStepFreight: useStepFreight,
-        selectedStepIndex: index
-    ));
   }
 
   @override
