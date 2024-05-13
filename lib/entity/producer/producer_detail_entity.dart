@@ -30,7 +30,7 @@ class ProducerDetailEntity extends ApiEntity<ProducerDetailEntity> {
     ..categories = json.getList("categories", converter: (e) => ProducerCategoryEntity().fromJson(e)) ?? []
     ..useStepFreight = json.getBool('useStepFreight') ?? false
     ..freight = json.getObject("freight", converter: (e) => FreightEntity().fromJson(e))
-    ..stepFreights = json.getList('freights', converter: (e) => FreightEntity().fromJson(e));
+    ..stepFreights = json.getList('stepFreights', converter: (e) => FreightEntity().fromJson(e));
 
   @override
   Map<String, dynamic> toJson() => {
@@ -39,6 +39,6 @@ class ProducerDetailEntity extends ApiEntity<ProducerDetailEntity> {
     'categories': categories.map((e) => e.toJson()).toList(),
     'useStepFreight': useStepFreight,
     'freight': freight?.toJson(),
-    'stepFreights': stepFreights?.map((e) => e.toJson()).toList()
+    'stepFreights': stepFreights?.map((e) => e.toJson()).toList() ?? []
   };
 }

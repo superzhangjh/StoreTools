@@ -103,7 +103,9 @@ class GoodsState extends BaseState<GoodsPage> {
           return ListTile(
             title: Row(
               children: [
-                GoodsItemView(goodsEntity: _goodsEntities?[index]),
+                Expanded(
+                    child: GoodsItemView(goodsEntity: _goodsEntities?[index])
+                ),
                 TextButton(
                     onPressed: () {
 

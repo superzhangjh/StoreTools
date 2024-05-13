@@ -91,7 +91,11 @@ class ProducerHomeState extends State<ProducerHomePage> {
     var result = await Api.queryAll(ProducerDetailEntity());
     if (result.isSuccess()) {
       setState(() {
-        log(jsonEncode(result.data));
+        try {
+          log(jsonEncode(result.data));
+        } catch (e) {
+          logDebug("解析错误: ${e.toString()}");
+        }
         _producers = result.data;
       });
     } else {

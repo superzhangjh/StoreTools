@@ -30,8 +30,8 @@ class ProducerSpecPage extends BottomSheetPage {
 class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
   final _controller = Get.find<ProducerEditorController>();
   late final _specEntity = widget.categoryEntity.specs.getSafeOfNull(widget.specIndex);
-  late final _nameController = TextEditingController(text: _specEntity?.name ?? '');
-  late final _priceController = TextEditingController(text: (_specEntity?.cost ?? 0).toString() );
+  late final _nameController = TextEditingController(text: _specEntity?.name);
+  late final _priceController = TextEditingController(text: _specEntity?.cost.toString() );
   final tagSelectors = <SelectorEntity<ProducerTagEntity>>[].obs;
 
   @override
@@ -57,6 +57,13 @@ class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
           floating: true,
           pinned: true,
           actions: [
+            Offstage(
+              offstage: widget.specIndex == null,
+              child: TextButton(
+                onPressed: () => _controller.deleteSpec(widget.categoryEntity, widget.specIndex),
+                child: const Text('删除'),
+              ),
+            ),
             TextButton(
                 onPressed: _save,
                 child: const Text('保存')
@@ -79,7 +86,7 @@ class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
               children: [
                 const Text('选择标签'),
                 Wrap(
-                  children: tagSelectors.map(_buildTag1).toList(),
+                  children: tagSelectors.map(_buildTag).toList(),
                 )
               ],
             ),
@@ -89,8 +96,7 @@ class ProducerSpecState extends BottomSheetState<ProducerSpecPage> {
     );
   }
 
-  Widget _buildTag1(SelectorEntity<ProducerTagEntity> selectorEntity) {
-    logDebug('更新：${selectorEntity.data.name}');
+  Widget _buildTag(SelectorEntity<ProducerTagEntity> selectorEntity) {
     return RadioButton(
       title: selectorEntity.data.name,
       isChecked: selectorEntity.isSelected,

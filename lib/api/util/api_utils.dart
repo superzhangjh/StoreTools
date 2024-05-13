@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:leancloud_storage/leancloud.dart';
-import 'package:storetools/entity/base_entity.dart';
+import 'package:storetools/entity/base/base_entity.dart';
 
 import '../apis.dart';
 

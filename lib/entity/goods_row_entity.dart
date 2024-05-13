@@ -1,4 +1,4 @@
-import 'package:storetools/entity/base_entity.dart';
+import 'package:storetools/entity/base/base_entity.dart';
 
 ///Excel读取到的商品行信息（与SKU一一绑定）
 class GoodsRowEntity extends BaseEntity<GoodsRowEntity> {

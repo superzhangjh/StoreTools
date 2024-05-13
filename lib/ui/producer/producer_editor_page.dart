@@ -9,7 +9,7 @@ import 'package:storetools/route/route_result.dart';
 import 'package:storetools/ui/producer/category/producer_category_editor_page.dart';
 import 'package:storetools/ui/producer/freight_editor/producer_freight_editor_page.dart';
 import 'package:storetools/ui/producer/producer_editor_controller.dart';
-import 'package:storetools/ui/producer/category/producer_spec_page.dart';
+import 'package:storetools/ui/producer/category/producer_spec_editor_page.dart';
 import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/widget/text_input_widget.dart';
@@ -90,13 +90,17 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
               child: _buildFreight(_controller.producer.value.freight, false),
             ),
           )),
-          Obx(() => SliverList(
-              delegate: SliverChildListDelegate(
-                  _controller.producer.value.stepFreights?.mapIndex((index, element) => Offstage(
-                    offstage: !_controller.producer.value.useStepFreight,
-                    child: _buildFreight(element, true, index: index),
-                  )) ?? []
-              ))),
+          Obx(() {
+            logDebug("阶梯运费: ${_controller.producer.value.stepFreights}");
+            return SliverList(
+                delegate: SliverChildListDelegate(
+                    _controller.producer.value.stepFreights?.mapIndex((index, element) => Offstage(
+                      offstage: !_controller.producer.value.useStepFreight,
+                      child: _buildFreight(element, true, index: index),
+                    )) ?? []
+                )
+            );
+          }),
           Obx(() {
             final useStepFreight = _controller.producer.value.useStepFreight;
             return SliverToBoxAdapter(
@@ -117,7 +121,10 @@ class ProducerEditorState extends BaseState<ProducerEditorPage> {
   Widget _buildCategory(ProducerCategoryEntity category) {
     return Column(
       children: [
-        Text(category.name),
+        TextButton(
+            onPressed: () => bottomSheetPage(ProducerCategoryEditorPage(categoryEntity: category)),
+            child: Text(category.name)
+        ),
         ...?category.specs.mapIndex((index, e) => _buildSpec(category, e, index)),
         IconTextButton(
             onPressed: () => bottomSheetPage(ProducerSpecPage(categoryEntity: category)),

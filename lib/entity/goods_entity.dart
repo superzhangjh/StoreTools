@@ -22,6 +22,8 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
   String? coverUrl;
   //sku组
   List<GoodsSkuGroupEntity> skuGroups = [];
+  //货源id
+  List<String> producerIds = [];
 
   @override
   Map<String, dynamic> toJson() => {
@@ -30,7 +32,8 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
     'shopId': shopId,
     'name': name,
     'coverUrl': coverUrl,
-    'skuGroups': skuGroups.map((e) => e.toJson()).toList()
+    'skuGroups': skuGroups.map((e) => e.toJson()).toList(),
+    'producerIds': producerIds
   };
 
   @override
@@ -40,7 +43,8 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
     ..shopId = json['shopId']
     ..name = json['name']
     ..coverUrl = json['coverUrl']
-    ..skuGroups = json.getList('skuGroups', converter: (e) => GoodsSkuGroupEntity().fromJson(e)) ?? [];
+    ..skuGroups = json.getList('skuGroups', converter: (e) => GoodsSkuGroupEntity().fromJson(e)) ?? []
+    ..producerIds = json.getList("producerIds") ?? [];
 
   ///将行数据转为商品数据，合并多个sku为一个商品
   ///[shopId]店铺id

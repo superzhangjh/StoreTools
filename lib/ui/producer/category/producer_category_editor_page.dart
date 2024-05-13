@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storetools/base/base_page.dart';
@@ -7,6 +9,7 @@ import 'package:storetools/entity/producer/producer_tag_entity.dart';
 import 'package:storetools/ext/text_editing_controller_ext.dart';
 import 'package:storetools/ui/producer/producer_editor_controller.dart';
 import 'package:storetools/utils/dialog_utils.dart';
+import 'package:storetools/utils/toast_utils.dart';
 import '../../../utils/short_uuid_utils.dart';
 import '../../../widget/text_input_widget.dart';
 
@@ -39,7 +42,7 @@ class ProducerCategoryEditorState extends BottomSheetState<ProducerCategoryEdito
             Offstage(
               offstage: _isCreate,
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => _controller.deleteCategory(_category),
                   child: const Text('删除')
               ),
             ),
@@ -89,8 +92,10 @@ class ProducerCategoryEditorState extends BottomSheetState<ProducerCategoryEdito
   }
 
   _save() async {
-    if (await _controller.createOrUpdateCategory(_isCreate, _nameController.stringValue(), _tags)) {
+    if (await _controller.createOrUpdateCategory(_category, _nameController.stringValue(), _tags)) {
       Get.back();
+    } else {
+      showToast(_isCreate? '创建失败': '编辑失败');
     }
   }
 }

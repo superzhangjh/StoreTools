@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/base/base_controller.dart';
 import 'package:storetools/entity/producer/producer_category_entity.dart';
 import 'package:storetools/entity/producer/producer_tag_entity.dart';
@@ -10,7 +11,6 @@ import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/route/route_result.dart';
 import 'package:storetools/utils/dialog_utils.dart';
 import 'package:storetools/utils/log_utils.dart';
-import 'package:storetools/utils/short_uuid_utils.dart';
 
 import '../../api/api.dart';
 import '../../base/bottom_sheet_page.dart';
@@ -31,30 +31,40 @@ class ProducerEditorController extends BaseController {
     nameController = TextEditingController(text: producer.value.name);
   }
 
-  ///新建分类
-  FutureOr<bool> createOrUpdateCategory(bool create, String name, List<ProducerTagEntity> tags) {
+  ///新建/修改分类
+  FutureOr<bool> createOrUpdateCategory(ProducerCategoryEntity? categoryEntity, String name, List<ProducerTagEntity> tags) {
     if (name.isEmpty) {
       showToast('名称未填写');
       return false;
     }
-
-    var category = producer.value.categories.find((e) => e.name == name);
-    if (create && category != null) {
-      showToast('该分类已存在');
-      return false;
-    }
-
-    category ??= ProducerCategoryEntity();
-    category.name = name;
-    category.tags = tags;
-    producer.update((val) {
-      if (create) {
-        val?.categories.add(category!);
-      } else {
-        val?.categories.replaceWhen(category!, (element) => element.name == category!.name);
+    if (categoryEntity == null) {
+      if (producer.value.categories.find((e) => e.name == name) != null) {
+        showToast('该分类已存在');
+        return false;
       }
-    });
+      final newCategory = ProducerCategoryEntity()
+          ..name = name
+          ..tags = tags;
+      producer.update((val) => val?.categories.add(newCategory));
+    } else {
+      final index = producer.value.categories.indexOf(categoryEntity);
+      if (index < 0 || index >= producer.value.categories.length) {
+        showToast('该分类不存在');
+        return false;
+      }
+      categoryEntity.name = name;
+      categoryEntity.tags = tags;
+      producer.update((val) => val?.categories.setSafe(index, categoryEntity));
+    }
     return true;
+  }
+
+  deleteCategory(ProducerCategoryEntity? categoryEntity) {
+    showConfirmDialog('确认删除${categoryEntity?.name}？', positiveText: '删除', onPositiveClick: () {
+      producer.update((val) => val?.categories.remove(categoryEntity));
+      showToast("删除成功");
+      Get.back();
+    });
   }
 
   ///新建规格
@@ -82,6 +92,19 @@ class ProducerEditorController extends BaseController {
       val?.categories.setSafe(categoryIndex, category);
     });
     return true;
+  }
+
+  deleteSpec(ProducerCategoryEntity category, int? specIndex) {
+    showConfirmDialog('确认删除${category.specs.getSafeOfNull(specIndex)?.name}？', positiveText: '删除', onPositiveClick: () {
+      if (specIndex != null) {
+        var categoryIndex = producer.value.categories.findIndex((element) => element.name == category.name);
+        producer.update((val) {
+          val?.categories.getSafeOfNull(categoryIndex)?.specs.removeAt(specIndex);
+          showToast("删除成功");
+          Get.back();
+        });
+      }
+    });
   }
 
   ///切换使用运费

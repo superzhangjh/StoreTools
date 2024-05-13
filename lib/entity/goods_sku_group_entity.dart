@@ -1,4 +1,4 @@
-import 'package:storetools/entity/base_entity.dart';
+import 'package:storetools/entity/base/base_entity.dart';
 import 'package:storetools/entity/goods_sku_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 

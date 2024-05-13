@@ -1,4 +1,4 @@
-import 'package:storetools/entity/base_entity.dart';
+import 'package:storetools/entity/base/base_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 ///货源标签（用于特殊逻辑处理）

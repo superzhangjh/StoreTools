@@ -1,8 +1,9 @@
-import 'package:storetools/entity/base_entity.dart';
+import 'package:storetools/entity/base/base_entity.dart';
+import 'package:storetools/entity/base/base_with_id_entity.dart';
 import 'package:storetools/ext/map_ext.dart';
 
 ///货源规格
-class ProducerSpecEntity extends BaseEntity<ProducerSpecEntity> {
+class ProducerSpecEntity extends BaseWithIdEntity<ProducerSpecEntity> {
   ///名称
   String name = '';
   ///该规格的价值（元）
@@ -11,15 +12,15 @@ class ProducerSpecEntity extends BaseEntity<ProducerSpecEntity> {
   String? tagId;
 
   @override
-  ProducerSpecEntity fromJson(Map<String, dynamic> json) => ProducerSpecEntity()
+  ProducerSpecEntity createFromJson(Map<String, dynamic> json) => ProducerSpecEntity()
     ..name = json.getString('name') ?? ''
     ..cost = json.getDouble('cost') ?? 0
     ..tagId = json.getString('tagId');
 
   @override
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'cost': cost,
-    'tagId': tagId
-  };
+  void fillToJson(Map<String, dynamic> json) {
+    json['name'] = name;
+    json['cost'] = cost;
+    json['tagId'] = tagId;
+  }
 }
