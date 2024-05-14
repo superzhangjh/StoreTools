@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:storetools/entity/goods_entity.dart';
+import 'package:storetools/entity/goods/goods_entity.dart';
 
 ///商品itemView
 class GoodsItemView extends StatefulWidget {

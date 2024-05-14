@@ -5,6 +5,8 @@ class Apis {
   static const lcNameGoods = "Goods";
   ///货源
   static const lcNameProducer = "Producer";
+  ///货源-商品绑定信息
+  static const lcNameGoodsProducerBinding = 'GoodsProducerBinding';
 
   ///唯一Id
   static const lcFieldObjectId = "objectId";

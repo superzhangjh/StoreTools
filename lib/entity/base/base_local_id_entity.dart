@@ -4,24 +4,23 @@ import 'package:storetools/ext/string_ext.dart';
 import 'package:storetools/utils/log_utils.dart';
 import 'package:storetools/utils/short_uuid_utils.dart';
 
-///带有唯一id的对象
-abstract class BaseWithIdEntity<E extends BaseWithIdEntity<dynamic>> extends BaseEntity<E> {
+///带有本地id的对象
+abstract class BaseLocalIdEntity<E extends BaseLocalIdEntity<dynamic>> extends BaseEntity<E> {
   String id = '';
 
-  BaseWithIdEntity([String? id]) {
+  BaseLocalIdEntity([String? id]) {
      this.id = id.isNullOrEmpty()? ShortUUidUtils.generateShortId(): (id ?? '');
   }
 
   @override
   Map<String, dynamic> toJson() {
-    var json = { 'id': id };
-    fillToJson(json);
-    logDebug("${runtimeType.toString()}转json:$json");
+    final json = convertToJson();
+    json['id'] = id;
     return json;
   }
 
   ///重写该方法，并且在json中追加数据
-  void fillToJson(Map<String, dynamic> json);
+  Map<String, dynamic> convertToJson();
 
   @override
   E fromJson(Map<String, dynamic> json) {

@@ -4,7 +4,7 @@ import 'package:storetools/excel/rowhelper/row_helper.dart';
 import 'package:storetools/excel/utils/cell_value_utils.dart';
 import 'package:storetools/ext/list_ext.dart';
 
-import '../../../entity/goods_row_entity.dart';
+import '../../../entity/goods/goods_row_entity.dart';
 
 ///商品转化
 class GoodsConverter extends XlsxConverter<GoodsRowEntity> {

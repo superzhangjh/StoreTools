@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:storetools/api/api.dart';
-import 'package:storetools/entity/goods_entity.dart';
+import 'package:storetools/entity/goods/goods_entity.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
 import '../../base/base_page.dart';

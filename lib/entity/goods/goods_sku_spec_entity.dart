@@ -1,7 +1,7 @@
 import 'package:storetools/entity/base/base_entity.dart';
 
 ///sku
-class GoodsSkuEntity extends BaseEntity<GoodsSkuEntity> {
+class GoodsSkuSpecEntity extends BaseEntity<GoodsSkuSpecEntity> {
   //id
   String id = '';
   //名称
@@ -16,7 +16,7 @@ class GoodsSkuEntity extends BaseEntity<GoodsSkuEntity> {
   double? costPrice;
 
   @override
-  GoodsSkuEntity fromJson(Map<String, dynamic> json) => GoodsSkuEntity()
+  GoodsSkuSpecEntity fromJson(Map<String, dynamic> json) => GoodsSkuSpecEntity()
     ..id = json['id']
     ..name = json['name']
     ..nickName = json['nickName']

@@ -1,48 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/api/api.dart';
 import 'package:storetools/api/apis.dart';
 import 'package:storetools/route/route_kit.dart';
 import 'package:storetools/route/route_paths.dart';
-import 'package:storetools/entity/goods_entity.dart';
+import 'package:storetools/entity/goods/goods_entity.dart';
 import 'package:storetools/ui/goods/view/goods_item_view.dart';
 import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/file_pick_utils.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
 import '../../base/base_page.dart';
+import 'goods_list_controller.dart';
 
 ///商品列表
-class GoodsPage extends BasePage {
-  const GoodsPage({super.key});
+class GoodsListPage extends BasePage {
+  const GoodsListPage({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return GoodsState();
-  }
+  State<StatefulWidget> createState() => GoodsListState();
 }
 
-class GoodsState extends BaseState<GoodsPage> {
+class GoodsListState extends BaseState<GoodsListPage> {
   static const menuAdd = 'Add';
   static const menuExcel = 'AddWithExcel';
 
+  late final _controller = Get.put(GoodsListController());
   String? _filePath;
-  List<GoodsEntity>? _goodsEntities;
-
-  @override
-  void initBuildContext(BuildContext context) {
-    super.initBuildContext(context);
-    _getGoodsList();
-  }
-
-  _getGoodsList() async {
-    var shopId = await UserKit.getShopId();
-    var result = await Api.whereEqualTo(GoodsEntity(), Apis.lcFieldShopId, shopId);
-    showToast(result.msg);
-    setState(() {
-      _goodsEntities = result.data;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,28 +81,37 @@ class GoodsState extends BaseState<GoodsPage> {
     );
   }
 
-  Widget _buildGoodsList(BuildContext context) {
-    return ListView.builder(
-        itemCount: _goodsEntities?.length ?? 0,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Row(
-              children: [
-                Expanded(
-                    child: GoodsItemView(goodsEntity: _goodsEntities?[index])
-                ),
-                TextButton(
-                    onPressed: () {
+  Widget _buildGoodsList(BuildContext context) => Obx(() => ListView.builder(
+      itemCount: _controller.goodsEntities.length,
+      itemBuilder: (context, index) {
+        final goodsEntity = _controller.goodsEntities[index];
+        return ListTile(
+          title: Row(
+            children: [
+              Expanded(
+                  child: GoodsItemView(goodsEntity: goodsEntity)
+              ),
+              TextButton(
+                  onPressed: () {
+                    if (goodsEntity.producerBindingIds.isEmpty) {
+                      _controller.toBindProducer();
+                    } else {
+                    }
+                  },
+                  child: Text(goodsEntity.producerBindingIds.isEmpty? '绑定货源': '代发订单')
+              )
+            ],
+          ),
+          onTap: () async {
 
-                    },
-                    child: const Text("新增代发订单")
-                )
-              ],
-            ),
-            onTap: () async {
+          },
+        );
+      })
+  );
 
-            },
-          );
-        });
+  @override
+  void dispose() {
+    Get.delete<GoodsListController>();
+    super.dispose();
   }
 }

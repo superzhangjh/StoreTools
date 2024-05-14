@@ -27,15 +27,11 @@ class HomeState extends BaseState<HomeFragment> {
             children: [
               Text("店铺：${widget.shopEntity.name}"),
               TextButton(
-                  onPressed: () {
-                    RouteKit.navigate(RoutePaths.goods);
-                  },
+                  onPressed: () => RouteKit.navigate(RoutePaths.goodsList),
                   child: const Text('商品列表')
               ),
               TextButton(
-                  onPressed: () {
-                    RouteKit.navigate(RoutePaths.producerHome);
-                  },
+                  onPressed: () => RouteKit.navigate(RoutePaths.producerHome),
                   child: const Text('货源管理')
               ),
             ]),

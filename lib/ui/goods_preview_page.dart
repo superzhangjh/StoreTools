@@ -12,7 +12,7 @@ import 'package:storetools/ui/goods/view/goods_item_view.dart';
 import 'package:storetools/user/user_kit.dart';
 import 'package:storetools/utils/route_arguments_utils.dart';
 
-import '../entity/goods_entity.dart';
+import '../entity/goods/goods_entity.dart';
 
 ///商品审核
 class GoodsPreviewPage extends BasePage {

@@ -3,18 +3,16 @@ import 'package:storetools/api/apis.dart';
 
 ///店铺
 class ShopEntity extends ApiEntity<ShopEntity> {
-  @override String? objectId;
-  @override String className = Apis.lcNameShop;
   String name = '';
 
-  @override
-  ShopEntity fromJson(Map<String, dynamic> json) => ShopEntity()
-    ..objectId = json['objectId']
-    ..name = json['name'];
+  ShopEntity() : super(Apis.lcNameShop);
 
   @override
-  Map<String, dynamic> toJson() => {
-    'objectId': objectId,
+  Map<String, dynamic> convertToJson() => {
     'name': name
   };
+
+  @override
+  ShopEntity createFromJson(Map<String, dynamic> json) => ShopEntity()
+    ..name = json['name'];
 }

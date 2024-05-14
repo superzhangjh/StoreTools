@@ -1,17 +1,14 @@
-
 import 'package:storetools/api/apis.dart';
-import 'package:storetools/entity/goods_sku_entity.dart';
+import 'package:storetools/entity/goods/goods_sku_spec_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
 import 'package:storetools/ext/map_ext.dart';
 
-import '../api/entity/api_entity.dart';
+import '../../api/entity/api_entity.dart';
 import 'goods_row_entity.dart';
-import 'goods_sku_group_entity.dart';
+import 'goods_sku_category_entity.dart';
+import 'goods_sku_entity.dart';
 
 class GoodsEntity extends ApiEntity<GoodsEntity> {
-  @override String className =  Apis.lcNameGoods;
-  @override String? objectId;
-
   //第三方的id
   String thirdPartyId = '';
   //店铺id
@@ -21,30 +18,34 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
   //封面图
   String? coverUrl;
   //sku组
-  List<GoodsSkuGroupEntity> skuGroups = [];
-  //货源id
-  List<String> producerIds = [];
+  List<GoodsSkuCategoryEntity> skuCategories = [];
+  //货源绑定id
+  List<String> producerBindingIds = [];
+  //sku信息
+  List<GoodsSkuEntity> skus = [];
+
+  GoodsEntity(): super(Apis.lcNameGoods);
 
   @override
-  Map<String, dynamic> toJson() => {
-    'objectId': objectId,
+  Map<String, dynamic> convertToJson() => {
     'thirdPartyId': thirdPartyId,
     'shopId': shopId,
     'name': name,
     'coverUrl': coverUrl,
-    'skuGroups': skuGroups.map((e) => e.toJson()).toList(),
-    'producerIds': producerIds
+    'skuCategories': skuCategories.map((e) => e.toJson()).toList(),
+    'producerBindingIds': producerBindingIds,
+    'skus': skus.map((e) => e.toJson()).toList()
   };
 
   @override
-  GoodsEntity fromJson(Map<String, dynamic> json) => GoodsEntity()
-    ..objectId = json['objectId']
+  GoodsEntity createFromJson(Map<String, dynamic> json) => GoodsEntity()
     ..thirdPartyId = json['thirdPartyId']
     ..shopId = json['shopId']
     ..name = json['name']
     ..coverUrl = json['coverUrl']
-    ..skuGroups = json.getList('skuGroups', converter: (e) => GoodsSkuGroupEntity().fromJson(e)) ?? []
-    ..producerIds = json.getList("producerIds") ?? [];
+    ..skuCategories = json.getList('skuCategories', converter: (e) => GoodsSkuCategoryEntity().fromJson(e)) ?? []
+    ..producerBindingIds = json.getList('producerBindingIds') ?? []
+    ..skus = json.getList("skus", converter: (e) => GoodsSkuEntity().fromJson(e)) ?? [];
 
   ///将行数据转为商品数据，合并多个sku为一个商品
   ///[shopId]店铺id
@@ -77,20 +78,26 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
     if (infoMap == null) return;
     for (var entry in infoMap.entries) {
       //查找名称相同的sku分组
-      var skuGroup = skuGroups.find((element) => element.name == entry.key);
-      if (skuGroup == null) {
+      var skuCategory = skuCategories.find((element) => element.name == entry.key);
+      if (skuCategory == null) {
         //如果该分组不存在，则创建分组信息
-        skuGroup = GoodsSkuGroupEntity();
-        skuGroup.name = entry.key;
-        skuGroups.add(skuGroup);
+        skuCategory = GoodsSkuCategoryEntity();
+        skuCategory.name = entry.key;
+        skuCategories.add(skuCategory);
       }
       //将sku添加到分组里
-      var sku = GoodsSkuEntity();
-      sku.id = skuId;
-      sku.name = entry.value;
-      sku.coverUrl = coverUrl;
-      sku.price = price;
-      skuGroup.skus.add(sku);
+      var spec = GoodsSkuSpecEntity()
+        ..id = skuId
+        ..name = entry.value
+        ..coverUrl = coverUrl
+        ..price = price;
+      skuCategory.skuSpecs.add(spec);
+
+      //添加sku
+      var sku = GoodsSkuEntity()
+        ..id = skuId
+        ..name = skuInfo;
+      skus.add(sku);
     }
   }
 

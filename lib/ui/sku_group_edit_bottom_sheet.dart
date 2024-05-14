@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:storetools/entity/goods_sku_group_entity.dart';
+// import 'package:storetools/entity/goods_sku_category_entity.dart';
 // import 'package:storetools/widget/text_input_widget.dart';
 //
 // ///sku组编辑

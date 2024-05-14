@@ -3,15 +3,14 @@ import 'package:get/get.dart';
 import 'package:leancloud_storage/leancloud.dart';
 import 'package:storetools/route/route_paths.dart';
 import 'package:storetools/ui/goods_edit_page.dart';
-import 'package:storetools/ui/goods/goods_page.dart';
+import 'package:storetools/ui/goods/goods_list_page.dart';
 import 'package:storetools/ui/goods_preview_page.dart';
+import 'package:storetools/ui/goods_producer_binding/goods_producer_binding_page.dart';
 import 'package:storetools/ui/home/home_page.dart';
 import 'package:storetools/ui/login_page.dart';
 import 'package:storetools/ui/producer/producer_editor_page.dart';
 import 'package:storetools/ui/producer/producer_home_page.dart';
 import 'package:storetools/ui/splash_page.dart';
-
-import 'asyncTask/data/isolate_data.dart';
 
 void main() async {
   await initializeApp();
@@ -45,11 +44,12 @@ class MyApp extends StatelessWidget {
         RoutePaths.splash: (_) => const SplashPage(),
         RoutePaths.login: (_) => const LoginPage(),
         RoutePaths.home: (_) => const HomePage(),
-        RoutePaths.goods: (_) => const GoodsPage(),
+        RoutePaths.goodsList: (_) => const GoodsListPage(),
         RoutePaths.goodsEdit: (_) => const GoodsEditPage(),
         RoutePaths.goodsPreview: (_) => const GoodsPreviewPage(),
         RoutePaths.producerHome: (_) => const ProducerHomePage(),
-        RoutePaths.producerEditor: (_) => const ProducerEditorPage()
+        RoutePaths.producerEditor: (_) => const ProducerEditorPage(),
+        RoutePaths.goodsProducerBinding: (_) => const GoodsProducerBindingPage()
       },
       debugShowCheckedModeBanner: false,
     );
