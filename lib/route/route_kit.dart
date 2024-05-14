@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:storetools/route/route_paths.dart';
 import 'package:storetools/route/route_result.dart';
+import 'package:storetools/ui/goods_producer_binding/goods_producer_binding_page.dart';
 
-import '../const/arguments.dart';
+import 'route_arguments.dart';
 import '../entity/producer/producer_detail_entity.dart';
 
 class RouteKit {
+  RouteKit._();
+
   ///跳转应用
   ///[routeName]跳转路径
   ///[arguments]携带参数
@@ -26,6 +29,14 @@ class RouteKit {
 
   ///货源编辑
   static Future<RouteResult<ProducerDetailEntity>> toProducerEditor({ ProducerDetailEntity? producer }) async {
-    return RouteKit.navigate<ProducerDetailEntity>(RoutePaths.producerEditor, arguments: { Arguments.producer: producer });
+    return RouteKit.navigate<ProducerDetailEntity>(RoutePaths.producerEditor, arguments: { RouteArguments.producer: producer });
+  }
+
+  ///货源绑定
+  static Future<RouteResult> toProducerBinding(String goodsId, ProducerDetailEntity producer) async {
+    return RouteKit.navigate<GoodsProducerBindingPage>(RoutePaths.goodsProducerBinding, arguments: {
+      RouteArguments.bindGoodsId: goodsId,
+      RouteArguments.producer: producer
+    });
   }
 }

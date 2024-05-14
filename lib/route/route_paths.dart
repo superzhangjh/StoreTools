@@ -7,7 +7,7 @@ class RoutePaths {
   static const goodsEdit = "/goodsEdit";
   static const goodsPreview = "/goodsPreview";
 
-  static const producerHome = "/producerHome";
+  static const producerList = "/producerList";
   static const producerEditor = "/producerEditor";
 
   static const goodsProducerBinding = "/goodsProducerBinding";

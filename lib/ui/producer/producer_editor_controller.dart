@@ -14,7 +14,7 @@ import 'package:storetools/utils/log_utils.dart';
 
 import '../../api/api.dart';
 import '../../base/bottom_sheet_page.dart';
-import '../../const/arguments.dart';
+import '../../route/route_arguments.dart';
 import '../../entity/producer/producer_detail_entity.dart';
 import '../../entity/producer/producer_spec_entity.dart';
 import '../../utils/route_arguments_utils.dart';
@@ -22,7 +22,7 @@ import '../../utils/toast_utils.dart';
 import 'freight_editor/producer_freight_editor_page.dart';
 
 class ProducerEditorController extends BaseController {
-  late Rx<ProducerDetailEntity> producer = Rx(getArgument<ProducerDetailEntity>(Arguments.producer)?.copy() ?? ProducerDetailEntity());
+  late Rx<ProducerDetailEntity> producer = Rx(getArgument<ProducerDetailEntity>(RouteArguments.producer)?.copy() ?? ProducerDetailEntity());
   late final TextEditingController nameController;
 
   @override

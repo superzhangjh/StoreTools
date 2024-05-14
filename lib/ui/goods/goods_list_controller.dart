@@ -17,6 +17,7 @@ class GoodsListController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    _getBounds();
     _getGoodsList();
   }
 
@@ -42,6 +43,6 @@ class GoodsListController extends BaseController {
 
   ///去绑定货源
   toBindProducer() {
-    RouteKit.navigate(RoutePaths.producerHome);
+    RouteKit.navigate(RoutePaths.producerList);
   }
 }

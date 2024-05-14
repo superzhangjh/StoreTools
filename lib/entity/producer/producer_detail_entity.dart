@@ -17,8 +17,10 @@ class ProducerDetailEntity extends ApiEntity<ProducerDetailEntity> {
   FreightEntity? freight;
   ///阶梯运费
   List<FreightEntity>? stepFreights;
+  ///绑定的商品id列表
+  List<String> goodsIds = [];
 
-  ProducerDetailEntity() : super(Apis.lcNameProducer);
+  ProducerDetailEntity({ bool onlyQueryKeys = false }) : super(Apis.lcNameProducer, onlyQueryKeys);
 
   @override
   Map<String, dynamic> convertToJson() => {
@@ -26,14 +28,22 @@ class ProducerDetailEntity extends ApiEntity<ProducerDetailEntity> {
     'categories': categories.map((e) => e.toJson()).toList(),
     'useStepFreight': useStepFreight,
     'freight': freight?.toJson(),
-    'stepFreights': stepFreights?.map((e) => e.toJson()).toList() ?? []
+    'stepFreights': stepFreights?.map((e) => e.toJson()).toList() ?? [],
+    'goodsIds': goodsIds
   };
 
   @override
   ProducerDetailEntity createFromJson(Map<String, dynamic> json) => ProducerDetailEntity()
-    ..name = json['name']
+    ..name = json.getString('name') ?? ''
     ..categories = json.getList("categories", converter: (e) => ProducerCategoryEntity().fromJson(e)) ?? []
     ..useStepFreight = json.getBool('useStepFreight') ?? false
     ..freight = json.getObject("freight", converter: (e) => FreightEntity().fromJson(e))
-    ..stepFreights = json.getList('stepFreights', converter: (e) => FreightEntity().fromJson(e));
+    ..stepFreights = json.getList('stepFreights', converter: (e) => FreightEntity().fromJson(e))
+    ..goodsIds = json.getList('goodsIds') ?? [];
+
+  ///是否已绑定商品
+  bool isBoundGoods() => goodsIds.isNotEmpty == true;
+
+  @override
+  List<String>? getQueryPartKeys() => ['name', 'goodsIds'];
 }

@@ -9,7 +9,7 @@ import 'package:storetools/ui/goods_producer_binding/goods_producer_binding_page
 import 'package:storetools/ui/home/home_page.dart';
 import 'package:storetools/ui/login_page.dart';
 import 'package:storetools/ui/producer/producer_editor_page.dart';
-import 'package:storetools/ui/producer/producer_home_page.dart';
+import 'package:storetools/ui/producer/list/producer_list_page.dart';
 import 'package:storetools/ui/splash_page.dart';
 
 void main() async {
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         RoutePaths.goodsList: (_) => const GoodsListPage(),
         RoutePaths.goodsEdit: (_) => const GoodsEditPage(),
         RoutePaths.goodsPreview: (_) => const GoodsPreviewPage(),
-        RoutePaths.producerHome: (_) => const ProducerHomePage(),
+        RoutePaths.producerList: (_) => const ProducerListPage(),
         RoutePaths.producerEditor: (_) => const ProducerEditorPage(),
         RoutePaths.goodsProducerBinding: (_) => const GoodsProducerBindingPage()
       },

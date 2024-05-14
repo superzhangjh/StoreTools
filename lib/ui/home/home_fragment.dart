@@ -10,9 +10,7 @@ class HomeFragment extends BasePage {
   const HomeFragment({super.key, required this.shopEntity});
 
   @override
-  State<StatefulWidget> createState() {
-    return HomeState();
-  }
+  State<StatefulWidget> createState() => HomeState();
 }
 
 class HomeState extends BaseState<HomeFragment> {
@@ -31,7 +29,7 @@ class HomeState extends BaseState<HomeFragment> {
                   child: const Text('商品列表')
               ),
               TextButton(
-                  onPressed: () => RouteKit.navigate(RoutePaths.producerHome),
+                  onPressed: () => RouteKit.navigate(RoutePaths.producerList),
                   child: const Text('货源管理')
               ),
             ]),

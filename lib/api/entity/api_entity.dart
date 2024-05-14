@@ -6,8 +6,10 @@ abstract class ApiEntity<E extends ApiEntity<dynamic>> extends BaseEntity<E> {
   String? objectId;
   //LeanCloud中的className
   String className;
+  //是否只查询指定字段
+  bool queryPart;
 
-  ApiEntity(this.className);
+  ApiEntity(this.className, this.queryPart);
 
   @override
   Map<String, dynamic> toJson() {
@@ -28,4 +30,7 @@ abstract class ApiEntity<E extends ApiEntity<dynamic>> extends BaseEntity<E> {
 
   ///重写该方法，并将json的数据填充的entity中
   E createFromJson(Map<String, dynamic> json);
+
+  ///指定查询字段
+  List<String>? getQueryPartKeys() => null;
 }
