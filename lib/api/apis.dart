@@ -1,4 +1,6 @@
 class Apis {
+  Apis._();
+
   ///店铺
   static const lcNameShop = 'Shop';
   ///商品

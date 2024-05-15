@@ -5,7 +5,7 @@ import 'package:storetools/api/apis.dart';
 class ShopEntity extends ApiEntity<ShopEntity> {
   String name = '';
 
-  ShopEntity() : super(Apis.lcNameShop);
+  ShopEntity({ bool queryPart = false }) : super(Apis.lcNameShop, queryPart);
 
   @override
   Map<String, dynamic> convertToJson() => {

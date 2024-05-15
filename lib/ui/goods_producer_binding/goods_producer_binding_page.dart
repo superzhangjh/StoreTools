@@ -14,10 +14,32 @@ class GoodsProducerBindingState extends BaseState<GoodsProducerBindingPage> {
   late final _controller = Get.put(GoodsProducerBindingController());
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
+  Widget build(BuildContext context) => CustomScrollView(
+    slivers: [
+      SliverAppBar(
+        title: const Text('绑定货源'),
+        floating: true,
+        pinned: true,
+        actions: [
+          TextButton(
+              onPressed: () {},
+              child: const Text('保存')
+          )
+        ],
+      ),
+      SliverPadding(
+        padding: const EdgeInsets.all(16),
+        sliver: SliverList(
+          delegate: SliverChildListDelegate([
+
+          ]),
+        ),
+      ),
+      const SliverToBoxAdapter(
+        child: Text("我是你爹"),
+      )
+    ],
+  );
 
   @override
   void dispose() {

@@ -24,7 +24,7 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
   //sku信息
   List<GoodsSkuEntity> skus = [];
 
-  GoodsEntity(): super(Apis.lcNameGoods);
+  GoodsEntity({ bool queryPart = false }): super(Apis.lcNameGoods, queryPart);
 
   @override
   Map<String, dynamic> convertToJson() => {
@@ -46,6 +46,9 @@ class GoodsEntity extends ApiEntity<GoodsEntity> {
     ..skuCategories = json.getList('skuCategories', converter: (e) => GoodsSkuCategoryEntity().fromJson(e)) ?? []
     ..producerBindingIds = json.getList('producerBindingIds') ?? []
     ..skus = json.getList("skus", converter: (e) => GoodsSkuEntity().fromJson(e)) ?? [];
+
+  @override
+  List<String>? getQueryPartKeys() => ['thirdPartyId', 'name', 'coverUrl', 'producerBindingIds'];
 
   ///将行数据转为商品数据，合并多个sku为一个商品
   ///[shopId]店铺id

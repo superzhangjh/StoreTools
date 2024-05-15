@@ -15,7 +15,7 @@ class GoodsProducerBindingEntity extends ApiEntity<GoodsProducerBindingEntity> {
   //sku绑定信息
   List<GoodsProducerSkuBindingEntity> skuBindings = [];
 
-  GoodsProducerBindingEntity() : super(Apis.lcNameGoodsProducerBinding);
+  GoodsProducerBindingEntity({ bool queryPart = false }) : super(Apis.lcNameGoodsProducerBinding, queryPart);
 
   @override
   GoodsProducerBindingEntity createFromJson(Map<String, dynamic> json) => GoodsProducerBindingEntity()
@@ -31,4 +31,7 @@ class GoodsProducerBindingEntity extends ApiEntity<GoodsProducerBindingEntity> {
     'producerId': producerId,
     'skuBindings': skuBindings.map((e) => e.toJson()).toList()
   };
+
+  @override
+  List<String>? getQueryPartKeys() => ['goodsId', 'goodsName', 'producerId'];
 }
