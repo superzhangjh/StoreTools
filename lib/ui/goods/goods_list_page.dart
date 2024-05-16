@@ -94,7 +94,7 @@ class GoodsListState extends BaseState<GoodsListPage> {
               TextButton(
                   onPressed: () {
                     if (goodsEntity.producerBindingIds.isEmpty) {
-                      _controller.toBindProducer();
+                      _controller.toBindProducer(goodsEntity);
                     } else {
                     }
                   },

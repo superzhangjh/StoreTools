@@ -23,9 +23,13 @@ class RouteKit {
     return RouteResult(data: data as T);
   }
 
-  // static toGoodsPreview() {
-  //
-  // }
+  ///货源列表
+  ///[goodsId]需要绑定的商品id
+  static Future<RouteResult> toProducerList({ String? goodsId }) async {
+    return RouteKit.navigate(RoutePaths.goodsList, arguments: {
+      RouteArguments.bindGoodsId: goodsId,
+    });
+  }
 
   ///货源编辑
   static Future<RouteResult<ProducerDetailEntity>> toProducerEditor({ ProducerDetailEntity? producer }) async {

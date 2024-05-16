@@ -25,7 +25,7 @@ class HomeState extends BaseState<HomeFragment> {
             children: [
               Text("店铺：${widget.shopEntity.name}"),
               TextButton(
-                  onPressed: () => RouteKit.navigate(RoutePaths.goodsList),
+                  onPressed: () => RouteKit.toProducerList(),
                   child: const Text('商品列表')
               ),
               TextButton(

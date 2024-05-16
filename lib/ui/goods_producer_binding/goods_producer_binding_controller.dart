@@ -4,6 +4,8 @@ import 'package:storetools/entity/binding/goods_producer_binding_entity.dart';
 import 'package:storetools/entity/goods/goods_entity.dart';
 import 'package:storetools/entity/producer/producer_detail_entity.dart';
 import 'package:storetools/ext/list_ext.dart';
+import 'package:storetools/ui/goods_producer_binding/entity/sku_category_bindable.dart';
+import 'package:storetools/ui/goods_producer_binding/entity/sku_spec_bindable.dart';
 import 'package:storetools/utils/toast_utils.dart';
 
 import '../../api/api.dart';
@@ -16,7 +18,7 @@ class GoodsProducerBindingController extends BaseController {
   late final producer = getArgument<ProducerDetailEntity>(RouteArguments.producer);
   GoodsProducerBindingEntity? bindingEntity;
   final goodsEntity = Rx<GoodsEntity?>(null);
-  final skuBindings = <SkuBindingWrapper>[].obs;
+  final skuCategoryBindalbes = <SkuCategoryBindable>[].obs;
 
   @override
   void onInit() {
@@ -37,7 +39,9 @@ class GoodsProducerBindingController extends BaseController {
     if (goodsId?.isNotEmpty == true) {
       var result = await Api.whereEqualTo(GoodsEntity(), Apis.lcFieldObjectId, goodsId);
       if (result.isSuccess()) {
-        goodsEntity.value = result.data?.getSafeOfNull(0);
+        final goods = result.data?.getSafeOfNull(0);
+        goodsEntity.value = goods;
+        if (goods != null) _generateSkuBindable(goods);
       } else {
         showToast(result.msg);
       }
@@ -46,11 +50,26 @@ class GoodsProducerBindingController extends BaseController {
       Get.back();
     }
   }
+
+  _generateSkuBindable(GoodsEntity goods) {
+    final categoryBindalbes = <SkuCategoryBindable>[];
+    for (var category in goods.skuCategories) {
+      categoryBindalbes.add(SkuCategoryBindable(
+          isBound: false,
+          name: category.name,
+          specs: category.skuSpecs.map((e) => SkuSpecBindable(
+              isBound: false,
+              name: e.name
+          )).toList()
+      ));
+    }
+    skuCategoryBindalbes.value = categoryBindalbes;
+  }
 }
 
-class SkuBindingWrapper {
-  bool bound;
-  String name;
-
-  SkuBindingWrapper({ required this.bound, required this.name });
-}
+// class SkuBindingWrapper {
+//   bool bound;
+//   String name;
+//
+//   SkuBindingWrapper({ required this.bound, required this.name });
+// }

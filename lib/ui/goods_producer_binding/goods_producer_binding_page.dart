@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:storetools/base/base_page.dart';
+import 'package:storetools/ui/goods_producer_binding/entity/sku_category_bindable.dart';
 import 'package:storetools/ui/goods_producer_binding/goods_producer_binding_controller.dart';
+
+import 'entity/sku_spec_bindable.dart';
 
 class GoodsProducerBindingPage extends BasePage {
   const GoodsProducerBindingPage({super.key});
@@ -27,19 +30,27 @@ class GoodsProducerBindingState extends BaseState<GoodsProducerBindingPage> {
           )
         ],
       ),
-      SliverPadding(
-        padding: const EdgeInsets.all(16),
-        sliver: SliverList(
-          delegate: SliverChildListDelegate([
-
-          ]),
-        ),
-      ),
-      const SliverToBoxAdapter(
-        child: Text("我是你爹"),
-      )
+      Obx(() => SliverList(
+        delegate: SliverChildListDelegate(_controller.skuCategoryBindalbes.map(_buildCategoryBindables).toList()),
+      ))
     ],
   );
+
+  Widget _buildCategoryBindables(SkuCategoryBindable bindable) {
+    return Column(
+      children: [
+        Text(bindable.name),
+        ...bindable.specs.map(_buildSpecBindables)
+      ],
+    );
+  }
+
+  Widget _buildSpecBindables(SkuSpecBindable bindable) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: Text(bindable.name),
+    );
+  }
 
   @override
   void dispose() {
