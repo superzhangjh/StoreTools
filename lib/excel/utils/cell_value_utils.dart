@@ -5,7 +5,7 @@ class CellValueUtils {
 
   static String? getString(CellValue? cellValue) {
     if (cellValue is TextCellValue) {
-      return cellValue.value;
+      return cellValue.value.text;
     }
     return cellValue?.toString();
   }
